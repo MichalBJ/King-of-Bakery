@@ -127,7 +127,7 @@ body {
     width: 0;
 }
 
-/*štylovanie hornej tretiny obrazovky, ktorá ma informativny charakter*/
+/*štylovanie hornej polovice obrazovky, ktorá ma informativny charakter*/
 
 .info-section {
     max-width: 100%;
@@ -338,6 +338,8 @@ body {
     background-color: rgb(59, 7, 55);
 }
 
+/*štylovanie dolnej polovice obrazovky, ktorá ma ovladaci charakter*/
+
 .control-section {
     max-width: 100%;
    
@@ -346,10 +348,12 @@ body {
     position: relative;
 }
 
+/*štylovanie sekcie pekareň*/
+
 .bakery {
     position: relative;
     width: 96.5%;
-    display: grid;
+    display: none;
     grid-template-columns: repeat(3, 1fr);
     column-gap: 25px;
     margin-left: 25px; 
@@ -398,7 +402,7 @@ body {
 
 .menu {
     position: absolute;
-    right: -8%;
+    right: -6%;
     width: 240px;
     height: 140px;
     display: flex;
@@ -466,6 +470,13 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    box-shadow: 0 0 3px 3px rgba(11, 11, 11, 0.4);
+}
+
+.menu li a>img:hover {
+    width: 50px;
+    height: 50px;
+    box-shadow: 0 0 0 6px rgba(11, 11, 11, 0.4);
 }
 
 .actual-doing {
@@ -540,4 +551,92 @@ body {
 
 .cas span {
     padding: 0 3px;
+}
+
+/*štylovanie sekcie sklad*/
+
+.storage {
+    position: relative;
+    width: 96.5%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 25px;
+    margin-left: 25px;
+}
+
+.machine-wraper {
+    width: 100%;
+    height: 400px;
+    background: rgba(0, 0, 0, 0.236);
+    margin: 20px 10px;
+    border-radius: 15px;
+}
+
+.machine-wraper > h3 {
+    text-align: center;
+    font-size: 22px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 15px 15px 0 0;
+} 
+
+.mixer-shm-200, .mixer-shm-500, .mixer-shm-1000 {
+    position: relative;
+    display: flex;
+    margin: 10px auto;
+    width: 95%;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 10px;
+}
+
+.mixer-shm-200 img, .mixer-shm-500 img, .mixer-shm-1000 img {
+    position: relative;
+    width: 80px;
+    margin: 10px;
+    border-radius: 5px;
+    display: inline;
+}
+
+.mixer-shm-200 h4, .mixer-shm-500 h4, .mixer-shm-1000 h4 {
+    height: 30px;
+    font-size: 17px;
+    position: relative;
+    top: 35px;
+    margin-right: 10px;
+    padding-right: 10px;
+}
+
+.mixer-shm-200 ul, .mixer-shm-500 ul, .mixer-shm-1000 ul {
+    position: relative;
+    top: 20px;
+    list-style: none;
+    margin-right: 15px;
+}
+
+.mixer-shm-200 .button-wraper, .mixer-shm-500 .button-wraper, .mixer-shm-1000 .button-wraper {
+    position: relative;
+    display: grid;
+    grid-template-rows: repeat(2, 1fr);
+    width: 100px;
+    margin-top: 15px;
+    margin-left: 5px;
+}
+
+.button {
+    position: relative;
+    width: 90px;
+    height: 30px;
+    background: linear-gradient(0deg, rgb(59, 8, 50) 0%, rgb(119, 11, 99) 35%, rgb(150, 13, 125) 100%);
+    border: 2px solid rgb(59, 8, 50);
+    border-radius: 15px;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.501);
+    color: white;
+    display: inline-block;
+}
+
+.button:hover {
+    
+    width: 95px;
+    height: 32px;
 }
