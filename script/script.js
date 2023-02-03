@@ -96,7 +96,15 @@ document.querySelector(".show-button-save").addEventListener("click", function (
 });
 
 
+/**spušťanie rolety */
+document.querySelectorAll(".wraper-in-storage").forEach(function (item) {
+    let wrap = item;
+    let toggle = item.querySelector('.caret');
 
-
+    toggle.addEventListener('click', function () {
+        wrap.classList.toggle('rollete');
+        toggle.classList.toggle('caret-rotate')
+    })
+})
 
 console.log(window.screen.availWidth)

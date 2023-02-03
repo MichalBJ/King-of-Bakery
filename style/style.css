@@ -564,23 +564,49 @@ body {
     margin-left: 25px;
 }
 
-.machine-wraper {
+.wraper-in-storage {
+    position: relative;
     width: 100%;
-    height: 400px;
+    max-height: 65px;
     background: rgba(0, 0, 0, 0.236);
     margin: 20px 10px;
     border-radius: 15px;
+    overflow: hidden;
+    transition: max-height 0.5s;
 }
 
-.machine-wraper > h3 {
+.wraper-in-storage > h3 {
     text-align: center;
     font-size: 22px;
     padding: 20px;
     background: rgba(0, 0, 0, 0.35);
-    border-radius: 15px 15px 0 0;
+    border-radius: 15px;
 } 
 
-.mixer-shm-200, .mixer-shm-500, .mixer-shm-1000 {
+.caret {
+    position: absolute;
+    top: 30px;
+    right: 50px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 9px solid #fff;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.rollete {
+    max-height: 100%;
+}
+
+.caret-rotate {
+    transform: rotate(180deg);
+}
+
+/*štylovanie ponuky strojov*/
+
+.machine {
     position: relative;
     display: flex;
     margin: 10px auto;
@@ -589,7 +615,7 @@ body {
     border-radius: 10px;
 }
 
-.mixer-shm-200 img, .mixer-shm-500 img, .mixer-shm-1000 img {
+.machine img {
     position: relative;
     width: 80px;
     margin: 10px;
@@ -597,29 +623,35 @@ body {
     display: inline;
 }
 
-.mixer-shm-200 h4, .mixer-shm-500 h4, .mixer-shm-1000 h4 {
+.machine h4{
+    max-width: 120px;
     height: 30px;
     font-size: 17px;
+    text-align: center;
     position: relative;
     top: 35px;
     margin-right: 10px;
     padding-right: 10px;
 }
 
-.mixer-shm-200 ul, .mixer-shm-500 ul, .mixer-shm-1000 ul {
+.machine ul{
     position: relative;
-    top: 20px;
+    top: 13px;
     list-style: none;
     margin-right: 15px;
 }
 
-.mixer-shm-200 .button-wraper, .mixer-shm-500 .button-wraper, .mixer-shm-1000 .button-wraper {
+.machine ul li {
+    padding: 3px 0;
+}
+
+.machine .button-wraper {
     position: relative;
     display: grid;
     grid-template-rows: repeat(2, 1fr);
     width: 100px;
     margin-top: 15px;
-    margin-left: 5px;
+    margin-left: 18px;
 }
 
 .button {
@@ -635,8 +667,112 @@ body {
     display: inline-block;
 }
 
-.button:hover {
-    
+.button:hover { 
     width: 95px;
     height: 32px;
+}
+
+.wraper-in-storage hr {
+    border: none;
+    margin: 3px auto;
+    height: 2px;
+    background: rgba(67, 67, 67, 0.415);
+    box-shadow: 0 0 4px rgba(250, 250, 250, 0.8);
+    border-radius: 50%;
+}
+
+/*štylovanie ponuky surovin*/
+
+.materials {
+    position: relative;
+    width: 96.5%;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    margin: 10px auto;
+    background: rgba(0, 0, 0, 0.236);
+    border-radius: 15px;
+}
+
+.header {
+    position: relative;
+    top: -10px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px 0;
+    font-size: 18px;
+}
+
+.header:first-child {
+    border-radius: 15px 0 0 0;
+}
+
+.header:nth-child(5) {
+    border-radius: 0 15px 0 0;
+}
+
+.materials div {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.name-material {
+    margin-left: 10px;
+}
+
+.buy-material {
+    position: relative;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    padding: 3px;
+    top: -18px;
+}
+
+.plus-item, .minus-item {
+    position: relative;
+    width: 45px;
+    height: 25px;
+    font-size: 20px;
+    text-align: center;
+    color: rgb(7, 7, 7);
+    background: linear-gradient(0deg, rgb(136, 136, 136) 0%, rgb(222, 220, 222) 40%, rgb(247, 246, 247) 100%);
+    border: 2px solid rgb(28, 27, 28);
+    cursor: pointer;
+}
+
+.plus-item {
+    border-radius: 5px 0 0 5px;
+}
+
+.minus-item {
+    border-radius: 0 5px 5px 0;
+}
+
+.plus-item:hover, .minus-item:hover {
+    background: linear-gradient(0deg, rgb(136, 136, 136) 0%, rgb(222, 220, 222) 90%, rgb(247, 246, 247) 100%);
+}
+
+.buy-material input {
+    position: relative;
+    top: 5px;
+    width: 80%;
+    height: 25px;
+    border-top: 2px solid rgb(28, 27, 28);;
+    border-bottom: 2px solid rgb(28, 27, 28);;
+    text-align: center;
+    font-size: 15px;
+    background: linear-gradient(0deg, rgb(136, 136, 136) 0%, rgb(222, 220, 222) 40%, rgb(247, 246, 247) 100%);
+}
+
+.buy-item-button {
+    position: relative;
+    top: 7px;
+    left: 15px;
+    width: 70%;
+    height: 25px;
+    background: linear-gradient(0deg, rgb(59, 8, 50) 0%, rgb(119, 11, 99) 35%, rgb(150, 13, 125) 100%);
+    border: 2px solid rgb(59, 8, 50);
+    border-radius: 15px;
+    cursor: pointer;
+    color: white;
 }
