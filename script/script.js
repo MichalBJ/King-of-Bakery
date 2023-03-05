@@ -39,10 +39,11 @@ document.querySelectorAll(".main-menu > ul > li").forEach(function (li) {
 /*tlačitko pre vyber produktu*/
 document.querySelectorAll('.machine-body').forEach(function (item) {
     let menu = item.querySelector('.menu');
-    let toggle = item.querySelector('.toggle');
+    let toggle = item.querySelector('.menu .toggle');
 
     toggle.addEventListener('click', function () {
-    menu.classList.toggle('active');
+        console.log('prechadzam')
+        menu.classList.toggle('active');
     })
 })
 
@@ -88,7 +89,7 @@ startButton.addEventListener('click', function () {
 })
 
 
-/**animacia tlačitka pre uloženie hry */
+/*animacia tlačitka pre uloženie hry */
 document.querySelector(".show-button-save").addEventListener("click", function () {
     document.querySelector(".show-button-save").classList.toggle('rotate-button');
     document.querySelector(".save-game").classList.toggle('anim-save-game');
@@ -96,7 +97,7 @@ document.querySelector(".show-button-save").addEventListener("click", function (
 });
 
 
-/**spušťanie rolety */
+/*spušťanie rolety v sekcii sklad */
 document.querySelectorAll(".wraper-in-storage").forEach(function (item) {
     let wrap = item;
     let toggle = item.querySelector('.caret');
@@ -106,5 +107,73 @@ document.querySelectorAll(".wraper-in-storage").forEach(function (item) {
         toggle.classList.toggle('caret-rotate')
     })
 })
+
+
+/* prepinanie sekcii pekareň, sklad, predjňa */
+document.querySelectorAll(".in-game-nav ul li").forEach(function (item) {
+
+    item.addEventListener('click', function () {
+
+        let switchSection = '.' + item.title;
+
+        document.querySelector(".bakery").style.display = 'none';
+        document.querySelector(".storage").style.display = 'none';
+        document.querySelector(".shop").style.display = 'none';
+        document.querySelector(switchSection).style.display = 'grid';      
+    })
+})
+
+
+/* Funkcie pre sekciu SKLAD */
+
+/* Nakup strojov */
+document.querySelectorAll('.machine .button-wraper .buy-button').forEach(function (button) {
+    let btn = button
+
+    btn.addEventListener('click', function () {
+        if (btn.title.slice(0, 1) === 'm'){
+
+            if (storage.money >= basicData.machines[btn.title]['price']){
+                machines.buyNewMixer(btn.title);
+                storage.removeMoney(basicData.machines[btn.title]['price']);
+            }else {
+                alert("Nemaš dostatok peňazi");
+            }
+            
+        } else if (btn.title.slice(0, 1) === 'd'){
+
+            if (storage.money >= basicData.machines[btn.title]['price']) {
+                machines.buyNewDispenser(btn.title);
+                storage.removeMoney(basicData.machines[btn.title]['price']);                
+            } else {
+                alert("Nemaš dostatok peňazi");
+            }
+            
+        } else if (btn.title.slice(0, 1) === 'o'){
+            if (storage.money >= basicData.machines[btn.title]['price']) {
+                machines.buyNewOwen(btn.title);
+                storage.removeMoney(basicData.machines[btn.title]['price']);                
+            } else {
+                alert("Nemaš dostatok peňazi");
+            }
+            
+        }
+
+        console.log('Mixery', machines.mixers.length)
+        console.log('Davkovače', machines.dispensers.length)
+        console.log('Pece', machines.owens.length)
+    })
+    
+    
+})
+
+/* Nakup ingrediencii a režnych nakladov */
+player.setValueOfQuantity()
+player.buyIngrediens();
+player.buyOverHeadCoast();
+
+
+consumptionTheRent()
+
 
 console.log(window.screen.availWidth)

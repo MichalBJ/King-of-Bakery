@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="prvy">
+        <div class="btn">stlac</div>
+    </div>
+    <div class="druhy">
+        <div class="btn2">novy</div>
+    </div>
+    <div class="treti">
+        <div class="btn3">prefarbiť</div>
+    </div>
+    
+
+    <script>
+        let aha = 5;
+
+        document.querySelectorAll('.btn').forEach(function (item) {
+            item.addEventListener('click', function () {
+                console.log('ahoj')
+                })
+            })
+
+        let btn2 = document.querySelector('.btn2');
+
+        console.log(btn2);
+
+
+        function klik() {
+            if (aha === 5) {
+                let btn2 = document.querySelector('.btn2');
+                btn2.addEventListener('click', function () {
+                    let body = document.querySelector('.prvy');
+                    let newbtn = document.createElement('div');
+                    newbtn.textContent = 'stlac';
+                    newbtn.classList.add('btn');
+                    body.appendChild(newbtn);
+
+                    newbtn.addEventListener('click', function () {
+                        console.log('moj')
+                    })
+
+
+                })
+            }
+            
+        }
+
+        document.querySelector('.btn3').addEventListener('click', function () {
+            
+            let items = document.querySelectorAll('.btn');
+
+            for (let i = 0; i<items.length; i++){
+                console.log(i);
+                items[i].style.color = 'red';
+            }
+            
+        })
+
+        klik()
+        
+    </script>
+</body>
+</html>

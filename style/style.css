@@ -353,20 +353,20 @@ body {
 .bakery {
     position: relative;
     width: 96.5%;
-    display: none;
+    display: grid;
     grid-template-columns: repeat(3, 1fr);
     column-gap: 25px;
     margin-left: 25px; 
 }
 
-.mixery-na-cesto {
+.bakery-machines {
     position: relative;
     width: 100%;
     margin-top: 20px;
     text-align: center;
 }
 
-.mixery-na-cesto h3 {
+.bakery-machines h3 {
     position: relative;
     top: -10px;
     padding: 10px;
@@ -433,8 +433,7 @@ body {
 
 .menu.active .toggle {
     transform: rotate(360deg);
-    box-shadow: 0 6px 8px rgba(115, 3, 78, 0.15), 0 0 0 4px rgb(162, 14, 135), 0 0 0 8px rgb(87, 9, 73);
-    
+    box-shadow: 0 6px 8px rgba(115, 3, 78, 0.15), 0 0 0 4px rgb(162, 14, 135), 0 0 0 8px rgb(87, 9, 73);   
 }
 
 .menu li {
@@ -558,7 +557,7 @@ body {
 .storage {
     position: relative;
     width: 96.5%;
-    display: grid;
+    display: none;
     grid-template-columns: repeat(3, 1fr);
     column-gap: 25px;
     margin-left: 25px;
@@ -683,6 +682,11 @@ body {
 
 /*štylovanie ponuky surovin, režijnych nakladov, reklamy*/
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
 .materials {
     position: relative;
     width: 96.5%;
@@ -764,7 +768,7 @@ body {
     background: linear-gradient(0deg, rgb(136, 136, 136) 0%, rgb(222, 220, 222) 40%, rgb(247, 246, 247) 100%);
 }
 
-.buy-item-button {
+.buy-item-button, .over-head-cost {
     position: relative;
     top: 7px;
     left: 15px;
@@ -834,6 +838,91 @@ body {
 .button-buy-recept {
     position: relative;
     display: inline;
+    width: 150px;
+    height: 30px;
+    margin: 10px 22%;
+    background: linear-gradient(0deg, rgb(85, 11, 71) 0%, rgb(119, 11, 99) 35%, rgb(150, 13, 125) 100%);
+    border: 2px solid rgb(59, 8, 50);
+    border-radius: 15px;
+    cursor: pointer;
+    color: white;
+}
+
+/*štylovanie sekcie predajne*/
+
+.shop {
+    position: relative;
+    width: 96.5%;
+    display: none;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 25px;
+    margin-left: 30px;
+    margin-top: 15px;
+}
+
+.customer {
+    width: 100%;
+    min-width: 300px;
+    background: rgba(0, 0, 0, 0.415);
+    border-radius: 15px;
+    border: 2px solid rgba(0, 0, 0, 0.415);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.501);
+    margin-top: 15px;
+}
+
+.customer-header {
+    display: flex;
+    width: 100%;
+}
+
+.customer-header img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 10px;
+    border: 3px solid rgb(172, 8, 144);
+    box-shadow: 2px 2px 4px rgb(60, 1, 51);
+}
+
+.name-wanted {
+    width: 100%;
+}
+
+.name-wanted h3 {
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    margin: 10px;
+    font-size: 25px;
+    padding: 5px 0;
+    background: linear-gradient(90deg, rgba(156, 24, 132, 0) 0%, rgba(156, 24, 132, 1) 50%, rgba(156, 24, 132, 0) 100%);
+}
+
+.wanted {
+    width: 95%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 5px;
+    background: rgba(0, 0, 0, 0.236);
+    border-radius: 15px;
+    margin-bottom: 5px;
+}
+
+.wanted li {
+    padding: 10px;
+    font-size: 18px;
+    list-style: none;
+}
+
+.name-wanted p {
+    width: 95%;
+    font-size: 20px;
+    margin: 10px 0;
+    background-color: rgb(143, 19, 120);
+    border-radius: 5px;
+    padding-left: 10px;
+}
+
+.btn-sell-products {
     width: 150px;
     height: 30px;
     margin: 10px 22%;
