@@ -127,11 +127,12 @@ class Machines {
     constructor() {
         this.mixers = [];
         this.dispensers = [];
-        this.owens = [] 
+        this.owens = []; 
     }
 
     buyNewMixer(mixerName) {
-        let newId = this.mixers.length + 1;
+        gameFunction.idGenerator();
+        let newId = gameFunction.id;
         let newMixer = new Machine(newId,
             basicData.machines[mixerName]['machineName'],
             basicData.machines[mixerName]['price'],
@@ -151,7 +152,8 @@ class Machines {
     }
 
     buyNewDispenser(dispenserName){
-        let newId = this.dispensers.length + 1;
+        gameFunction.idGenerator();
+        let newId = gameFunction.id;
         let newDispenser = new Machine(newId,
             basicData.machines[dispenserName]['machineName'],
             basicData.machines[dispenserName]['price'],
@@ -171,7 +173,8 @@ class Machines {
     }
 
     buyNewOwen(owenName) {
-        let newId = this.owens.length + 1;
+        gameFunction.idGenerator();
+        let newId = gameFunction.id;
         let newOwen = new Machine(newId,
             basicData.machines[owenName]['machineName'],
             basicData.machines[owenName]['price'],
@@ -295,44 +298,170 @@ class Render{
                                 <h4>${basicData.machines[machine]['machineName']}</h4>
                                 <img src="img/products/bread.jpg">
                             </div>`
-
+        machineBody.id = gameFunction.id;
         let menu = this.createElement('div', 'menu', '');
-        menu.innerHTML += `<li style="--i:0;">
-                                    <a href='#'><img src="img/products/bread.jpg"></a>
-                                </li>
-                                <li style="--i:1;">
-                                    <a href='#'><img src="img/products/rohlik.jpg"></a>
-                                </li>
-                                <li style="--i:2;">
-                                    <a href='#'><img src="img/products/bageta.jpg"></a>
-                                </li>
-                                <li style="--i:3;">
-                                    <a href='#'><img src="img/products/croisant.jpg"></a>
-                                </li>
-                                <li style="--i:4;">
-                                    <a href='#'><img src="img/products/makovnik.jpg"></a>
-                                </li>
-                                <li style="--i:5;">
-                                    <a href='#'><img src="img/products/muffin.jpg"></a>
-                                </li>
-                                <li style="--i:6;">
-                                    <a href='#'><img src="img/products/zemla.jpg"></a>
-                                </li>
-                                <li style="--i:7;">
-                                    <a href='#'><img src="img/products/donut.jpg"></a>
-                                </li>
-                                <li style="--i:8;">
-                                    <a href='#'><img src="img/products/siska.jpg"></a>
-                                </li>
-                                <li style="--i:9;">
-                                    <a href='#'><img src="img/products/sendvic.jpg"></a>
-                                </li>`
+        let li0 = this.createElement('li', 'none', '');
+        let li1 = this.createElement('li', 'none', '');
+        let li2 = this.createElement('li', 'none', '');
+        let li3 = this.createElement('li', 'none', '');
+        let li4 = this.createElement('li', 'none', '');
+        let li5 = this.createElement('li', 'none', '');
+        let li6 = this.createElement('li', 'none', '');
+        let li7 = this.createElement('li', 'none', '');
+        let li8 = this.createElement('li', 'none', '');
+        let li9 = this.createElement('li', 'none', '');
+        let a0 = this.createElement('a', gameFunction.id, '');
+        let a1 = this.createElement('a', gameFunction.id, '');
+        let a2 = this.createElement('a', gameFunction.id, '');
+        let a3 = this.createElement('a', gameFunction.id, '');
+        let a4 = this.createElement('a', gameFunction.id, '');
+        let a5 = this.createElement('a', gameFunction.id, '');
+        let a6 = this.createElement('a', gameFunction.id, '');
+        let a7 = this.createElement('a', gameFunction.id, '');
+        let a8 = this.createElement('a', gameFunction.id, '');
+        let a9 = this.createElement('a', gameFunction.id, '');
+        let img0 = this.createElement('img', 'none', '');
+        let img1 = this.createElement('img', 'none', '');
+        let img2 = this.createElement('img', 'none', '');
+        let img3 = this.createElement('img', 'none', '');
+        let img4 = this.createElement('img', 'none', '');
+        let img5 = this.createElement('img', 'none', '');
+        let img6 = this.createElement('img', 'none', '');
+        let img7 = this.createElement('img', 'none', '');
+        let img8 = this.createElement('img', 'none', '');
+        let img9 = this.createElement('img', 'none', '');
+        let btn = this.createElement('button', 'none', 'VYROBIŤ');
+        let progresBar = this.createElement('div', 'progres-bar', '');
+        let cas = this.createElement('div', 'cas', 'TIME');
+        let span1 = this.createElement('span', 'time', '10');
+        let span2 = this.createElement('span', 'none', 's');
+        let progresLine = this.createElement('div', 'line', '');
+        btn.type = 'button';
+        li0.style = "--i:0;";
+        li1.style = "--i:1;";
+        li2.style = "--i:2;";
+        li3.style = "--i:3;";
+        li4.style = "--i:4;";
+        li5.style = "--i:5;";
+        li6.style = "--i:6;";
+        li7.style = "--i:7;";
+        li8.style = "--i:8;";
+        li9.style = "--i:9;"; 
+        a0.href = '#';
+        a1.href = '#';
+        a2.href = '#';
+        a3.href = '#';
+        a4.href = '#';
+        a5.href = '#';
+        a6.href = '#';
+        a7.href = '#';
+        a8.href = '#';
+        a9.href = '#';
+        a0.title = 'bread';
+        a1.title = 'rohlik';
+        a2.title = 'bageta';
+        a3.title = 'zemla';
+        a4.title = 'croissant';
+        a5.title = 'makovnik';
+        a6.title = 'donut';
+        a7.title = 'toast';
+        a8.title = 'siska';
+        a9.title = 'muffin';
+
+        img0.src = "img/products/bread.jpg";
+        img1.src = "img/products/rohlik.jpg";
+        img2.src = "img/products/bageta.jpg";
+        img3.src = "img/products/zemla.jpg";
+        img4.src = "img/products/croisant.jpg";
+        img5.src = "img/products/makovnik.jpg";
+        img6.src = "img/products/donut.jpg";
+        img7.src = "img/products/sendvic.jpg";
+        img8.src = "img/products/siska.jpg";
+        img9.src = "img/products/muffin.jpg";
+
+        a0.addEventListener('click', function () {
+            gameFunction.selectItemToMade(a0); 
+        })
+
+        a1.addEventListener('click', function () {
+            gameFunction.selectItemToMade(a1);
+        })
+
+        a2.addEventListener('click', function () {
+            gameFunction.selectItemToMade(a2);
+        })
+
+        a3.addEventListener('click', function () {
+            gameFunction.selectItemToMade(a3);
+        })
+
+        a4.addEventListener('click', function () {
+            gameFunction.selectItemToMade(a4);
+        })
+
+        a5.addEventListener('click', function () {
+            gameFunction.selectItemToMade(a5);
+        })
+
+        a6.addEventListener('click', function () {
+            gameFunction.selectItemToMade(a6);
+        })
+
+        a7.addEventListener('click', function () {
+            gameFunction.selectItemToMade(a7);
+        })
+
+        a8.addEventListener('click', function () {
+            gameFunction.selectItemToMade(a8);
+        })
+
+        a9.addEventListener('click', function () {
+            gameFunction.selectItemToMade(a9);
+        })
 
         let toggle = this.createElement('div', 'toggle', 'Zvoľ produkt');
+
         toggle.addEventListener('click', function () {
             menu.classList.toggle('active');
         });
+
+        cas.appendChild(span1);
+        cas.appendChild(span2);
+        progresBar.appendChild(cas);
+        progresBar.appendChild(progresLine);
+        a0.appendChild(img0);
+        a1.appendChild(img1);
+        a2.appendChild(img2);
+        a3.appendChild(img3);
+        a4.appendChild(img4);
+        a5.appendChild(img5);
+        a6.appendChild(img6);
+        a7.appendChild(img7);
+        a8.appendChild(img8);
+        a9.appendChild(img9);
+        li0.appendChild(a0);
+        li1.appendChild(a1);
+        li2.appendChild(a2);
+        li3.appendChild(a3);
+        li4.appendChild(a4);
+        li5.appendChild(a5);
+        li6.appendChild(a6);
+        li7.appendChild(a7);
+        li8.appendChild(a8);
+        li9.appendChild(a9);
+        menu.appendChild(li0);
+        menu.appendChild(li1);
+        menu.appendChild(li2);
+        menu.appendChild(li3);
+        menu.appendChild(li4);
+        menu.appendChild(li5);
+        menu.appendChild(li6);
+        menu.appendChild(li7);
+        menu.appendChild(li8);
+        menu.appendChild(li9);
         menu.appendChild(toggle)
+        machineBody.appendChild(progresBar)
+        machineBody.appendChild(btn)
         machineBody.appendChild(menu)
         mixers.appendChild(machineBody)
     }
@@ -342,7 +471,6 @@ class Render{
             item.textContent = newValue
         });
     }
-
 }
 
 class BasicData {
@@ -483,8 +611,165 @@ class BasicData {
                 'quantity': 10
             }
         }
+        this.recepts = {
+            'bread': {
+                'flour': 3,
+                'water': 2.4,
+                'cumin': 120,
+                'yeast': 60,
+                'kneading': 60,
+                'dosing': 30,
+                'baking': 90,
+                'numberOfPieces': 16,
+                'priceOfOnePiece': 1,
+                'img': 'img/products/bread.jpg'
+            },
+            'rohlik':{
+                'flour': 3,
+                'milk': 0.4,
+                'oil': 0.2,
+                'yeast': 20,
+                'kneading': 45,
+                'dosing': 90,
+                'baking': 90,
+                'numberOfPieces': 6,
+                'priceOfOnePiece': 1,
+                'img': 'img/products/rohlik.jpg',
+            },
+            'bageta':{
+                'flour': 1,
+                'water': 0.6,
+                'sugar': 0.04,
+                'yeast': 40,
+                'kneading': 60,
+                'dosing': 60,
+                'baking': 90,
+                'numberOfPieces': 8,
+                'priceOfOnePiece': 1,
+                'img': 'img/products/bageta.jpg'
+            },
+            'zemla': {
+                'flour': 0.75,  
+                'butter': 75,
+                'milk': 0.38,
+                'yeast': 20,
+                'kneading': 60,
+                'dosing': 90,
+                'baking': 60,
+                'numberOfPieces': 12,
+                'priceOfOnePiece': 1,
+                'img': 'img/products/zemla.jpg'
+            },
+            'croissant': {
+                'flour': 0.5,
+                'milk': 0.5,
+                'sugar': 0.05,
+                'butter': 400,
+                'eggs': 1,
+                'yeast': 15,
+                'kneading': 60,
+                'dosing': 90,
+                'baking': 60,
+                'numberOfPieces': 12,
+                'priceOfOnePiece': 1,
+                'img': 'img/products/croisant.jpg'
+            },
+            'makovnik': {
+                'flour': 2,
+                'eggs': 12,
+                'milk': 2.4,
+                'sugar': 1.7,
+                'poppy': 1700,
+                'butter': 640,
+                'kneading': 120,
+                'dosing': 60,
+                'baking': 90,
+                'numberOfPieces': 8,
+                'priceOfOnePiece': 1,
+                'img': 'img/products/makovnik.jpg'
+            },
+            'donut': {
+                'flour': 0.75,
+                'butter': 180,
+                'eggs': 5,
+                'milk': 0.38,
+                'sugar': 0.08,
+                'yeast': 60,
+                'chocolate': 230,
+                'kneading': 120,
+                'dosing': 90,
+                'baking': 60,
+                'numberOfPieces': 12,
+                'priceOfOnePiece': 1,
+                'img': 'img/products/donut.jpg'
+            },
+            'toast': {
+                'flour': 3,
+                'butter': 180,
+                'water': 1.8,
+                'eggs': 6,
+                'yeast': 120,
+                'kneading': 90,
+                'dosing': 90,
+                'baking': 60,
+                'numberOfPieces': 6,
+                'priceOfOnePiece': 1,
+                'img': 'img/products/sendvic.jpg'
+            },
+            'siska': {
+                'flour': 0.5,
+                'eggs': 3,
+                'milk': 0.3,
+                'sugar': 0.08,
+                'yeast': 20,
+                'jam': 500,
+                'kneading': 90,
+                'dosing': 90,
+                'baking': 60,
+                'numberOfPieces': 12,
+                'priceOfOnePiece': 1,
+                'img': 'img/products/siska.jpg'
+            },
+            'muffin':{
+                'flour': 0.5,
+                'sugar': 0.2,
+                'chocolate': 250,
+                'eggs': 1,
+                'oil': 0.2,
+                'milk': 0.25,
+                'kneading': 120,
+                'dosing': 90,
+                'baking': 60,
+                'numberOfPieces': 12,
+                'priceOfOnePiece': 1,
+                'img': 'img/products/muffin.jpg'
+            }
+        }
     }
 }
+
+class GameFunction {
+
+    constructor(){
+        this.id = '';
+    }
+    selectItemToMade(par){
+        let machineElement = document.getElementById(par.className)
+        let img = machineElement.querySelector('.actual-doing img')
+        let h4 = machineElement.querySelector('.actual-doing h4')
+        let menu = machineElement.querySelector('.menu')
+
+        img.src = basicData.recepts[par.title]['img']
+        img.style.display = 'block'
+        h4.style.display = 'none'
+        menu.classList.toggle('active')             
+    }
+
+    idGenerator(){
+        this.id = uuidv4()
+    }
+}
+
 
 const consumptionTheRent = function () {
     let lastTime = 3;
@@ -502,7 +787,6 @@ const consumptionTheRent = function () {
             document.querySelector('.overhead-costs ul li:last-child').style.color = 'white';
             lastTime = 3
         }
-        console.log('rent', storage.overHeadCosts['theRent'])
     }, 100);
 }
 
@@ -512,6 +796,7 @@ let machines = new Machines();
 let basicData = new BasicData();
 let render = new Render();
 let player = new Player();
+let gameFunction = new GameFunction();
 
 
 

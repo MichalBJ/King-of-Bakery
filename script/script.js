@@ -42,7 +42,6 @@ document.querySelectorAll('.machine-body').forEach(function (item) {
     let toggle = item.querySelector('.menu .toggle');
 
     toggle.addEventListener('click', function () {
-        console.log('prechadzam')
         menu.classList.toggle('active');
     })
 })
@@ -50,43 +49,46 @@ document.querySelectorAll('.machine-body').forEach(function (item) {
 
 
 /*skuska animacie progresbaru*/
-let machineBody = document.querySelector('.machine-body');
-let startButton = machineBody.querySelector('button');
-let progresBar = machineBody.querySelector('.progres-bar');
-let progresLine = machineBody.querySelector('.line');
+document.querySelectorAll('.machine-body').forEach(function (body) {
+    let btn = body.querySelector('button');
+    let progresBar = body.querySelector('.progres-bar');
+    let progresLine = body.querySelector('.line');
 
+    console.log('btn', btn)
 
-startButton.addEventListener('click', function () {
-    startButton.style.display = 'none';
-    progresBar.style.display = 'flex';
-    let rychlost = parseInt(10000 / progresBar.offsetWidth);
-    let cas = machineBody.querySelector('.cas span');
-    let newWidth = 0;
-    let newCas = 10;
+    btn.addEventListener('click', function () {
+        btn.style.display = 'none';
+        progresBar.style.display = 'flex';
+        let rychlost = parseInt(10000 / progresBar.offsetWidth);
+        let cas = body.querySelector('.cas span');
+        let newWidth = 0;
+        let newCas = 10;
 
-    console.log('hodnota', parseInt(1000 / progresBar.offsetWidth))
-    console.log('rychlost', rychlost)
+        console.log('hodnota', parseInt(1000 / progresBar.offsetWidth))
+        console.log('rychlost', rychlost)
 
-    let progresanimation = setInterval(() => {
-        newWidth += 1;
-        if (newWidth % (parseInt(1000 / rychlost ) - 1) === 0){
-            newCas -= 1;
-            cas.innerText = newCas;
-            console.log('newcas', newCas)
-        }
-            
-        if (newWidth < progresBar.offsetWidth){
-        progresLine.style.width = newWidth.toString() + 'px';
-        console.log(progresLine.style.width)
-        }
-        else {  
-            clearInterval(progresanimation)
-            startButton.style.display = 'block';
-            progresBar.style.display = 'none';
-            progresLine.style.width = '0';
-        }
-    }, rychlost);
+        let progresanimation = setInterval(() => {
+            newWidth += 1;
+            if (newWidth % (parseInt(1000 / rychlost) - 1) === 0) {
+                newCas -= 1;
+                cas.innerText = newCas;
+                console.log('newcas', newCas)
+            }
+
+            if (newWidth < progresBar.offsetWidth) {
+                progresLine.style.width = newWidth.toString() + 'px';
+                console.log(progresLine.style.width)
+            }
+            else {
+                clearInterval(progresanimation)
+                btn.style.display = 'block';
+                progresBar.style.display = 'none';
+                progresLine.style.width = '0';
+            }
+        }, rychlost);
+    })
 })
+
 
 
 /*animacia tlačitka pre uloženie hry */
@@ -173,7 +175,9 @@ player.buyIngrediens();
 player.buyOverHeadCoast();
 
 
-consumptionTheRent()
+//consumptionTheRent()
+
+//gameFunction.selectItemToMade()
 
 
 console.log(window.screen.availWidth)
