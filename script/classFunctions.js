@@ -46,15 +46,15 @@ class Storage {
         }
         this.money = 3000
         this.ingredients = {
-            "flour": 1000,
-            "water": 1000,
+            "flour": 100,
+            "water": 100,
             "yeast": 1000,
             "cumin": 1000,
-            "milk": 1000,
-            "oil": 1000,
-            "sugar": 1000,
-            "butter": 1000,
-            "eggs": 1000,
+            "milk": 100,
+            "oil": 100,
+            "sugar": 100,
+            "butter": 100,
+            "eggs": 100,
             "poppy": 1000,
             "chocolate": 1000,
             "jam": 1000
@@ -62,27 +62,47 @@ class Storage {
     }
 
     addFinallProducts(item, howMany){
-        this.allProducts['finalProduct'][item] += howMany
+        const typeToRender = 'finalProduct';
+        this.allProducts['finalProduct'][machines.machines[item].create] += howMany
+        render.preRenderProductOnInfoPanel(item, typeToRender)
     }
 
     removeFinallProducts(item, howMany) {
-        this.allProducts['finalProduct'][item] -= howMany
+        const typeToRender = 'finalProduct';
+        this.allProducts['finalProduct'][machines.machines[item].create] -= howMany
+        render.preRenderProductOnInfoPanel(item, typeToRender)
     }
 
     addDough(item, howMany){
-        this.allProducts['dough'][item] += howMany
+        const typeToRender = 'dough'
+        this.allProducts['dough'][machines.machines[item].create] += howMany
+        render.preRenderProductOnInfoPanel(item, typeToRender)
     }
 
-    removeDough(item, howMany) {
-        this.allProducts['dough'][item] -= howMany
+    removeDough(item, howMany){
+        const typeToRender = 'dough'
+        if (typeof (item) === 'number'){
+            this.allProducts['dough'][machines.machines[item].create] -= howMany
+        } else {
+           this.allProducts['dough'][item.create] -= howMany 
+        }
+        render.preRenderProductOnInfoPanel(item, typeToRender)
     }
 
-    addTheTray(item, howMany) {
-        this.allProducts['theTray'][item] += howMany
+    addTheTray(item, howMany){
+        const typeToRender = 'theTray';
+        this.allProducts['theTray'][machines.machines[item].create] += howMany
+        render.preRenderProductOnInfoPanel(item, typeToRender)
     }
 
-    removeTheTray(item, howMany) {
-        this.allProducts['theTray'][item] -= howMany
+    removeTheTray(item, howMany){
+        const typeToRender = 'theTray';
+        if (typeof (item) === 'number'){
+            this.allProducts['theTray'][machines.machines[item].create] -= howMany
+        }else{
+            this.allProducts['theTray'][item.create] -= howMany 
+        }
+        render.preRenderProductOnInfoPanel(item, typeToRender)
     }
 
     addOverheadCosts(item, howMany) {
@@ -435,7 +455,7 @@ class Render{
         })
 
         buttonCreate.addEventListener('click', function () {
-            createProduct.setProductToMake(machineBody.id)
+            createProduct.sentProductToMake(machineBody.id)
         })
 
         let toggle = this.createElement('div', 'toggle', 'Zvoľ produkt');
@@ -489,13 +509,18 @@ class Render{
 
     preRenderIngredients(item, newValue){
         document.querySelectorAll('.' + item).forEach(function (item) {
-            item.textContent = newValue
+            item.textContent = newValue.toFixed(0)
         });
     }
 
-    preRenderProductOnInfoPanel(i){
-        document.querySelector('.' + machines.machines[i].producting + '-' + machines.machines[i].create).textContent = storage.allProducts[machines.machines[i].producting][machines.machines[i].create]
-    }
+    preRenderProductOnInfoPanel(i, whatTypeRender){
+
+        if (typeof(i) === 'number'){
+            document.querySelector('.' + whatTypeRender + '-' + machines.machines[i].create).textContent = storage.allProducts[whatTypeRender][machines.machines[i].create]
+        }else{
+            document.querySelector('.' + whatTypeRender + '-' + i.create).textContent = storage.allProducts[whatTypeRender][i.create]
+            }
+        }
 }
 
 class BasicData {
@@ -644,8 +669,8 @@ class BasicData {
                 'cumin': 120,
                 'yeast': 60,
                 'kneading': 10,
-                'dosing': 30,
-                'baking': 90,
+                'dosing': 11,
+                'baking': 11,
                 'numberOfPieces': 6,
                 'priceOfOnePiece': 1,
                 'img': 'img/products/bread.jpg'
@@ -786,7 +811,7 @@ class CreateProduct {
         let h4 = machineElement.querySelector('.actual-doing h4');
         let menu = machineElement.querySelector('.menu');
 
-        machines.machines.find(val => val.id === par.className).create = par.title
+        machines.machines.find(machine => machine.id === par.className).create = par.title
     
         img.src = basicData.recepts[par.title]['img'];
         img.style.display = 'block';
@@ -829,12 +854,20 @@ class CreateProduct {
     }
 
     checkDoughForTheTray(machine){
-        if(storage.allProducts['dough'][machine.create] > 0) {
+        const electricity = machine.consumption * (basicData.recepts[machine.create]['dosing'] / 60)
+        if(storage.allProducts['dough'][machine.create] > 0 && storage.overHeadCosts['electricity'] > electricity ) {
             return true
         }
     }
 
-    setProductToMake(machineId) {
+    checkTheTrayForFinalProduct(machine) {
+        const electricity = machine.consumption * (basicData.recepts[machine.create]['baking'] / 60)
+        if (storage.allProducts['theTray'][machine.create] > 0 && storage.overHeadCosts['electricity'] > electricity) {
+            return true
+        }
+    }
+
+    sentProductToMake(machineId) {
         const machine = machines.machines.find(val => val.id === machineId);
 
         console.log('meno pristroja', machine.machineName);
@@ -843,16 +876,37 @@ class CreateProduct {
 
         if (machine.producting === 'dough') {
             if (this.checkIngrediensForDough(machine)) {
-                console.log('mozem?', this.checkIngrediensForDough(machine))
-                machines.machines.find(val => val.id === machineId).working = true;
-                machines.machines.find(val => val.id === machineId).finishTime = basicData.recepts[machine.create][machine.activity]
+                machines.machines.find(machine => machine.id === machineId).working = true;
+                machines.machines.find(machine => machine.id === machineId).finishTime = basicData.recepts[machine.create][machine.activity]
+                storage.removeOverheadCosts('electricity', machine.consumption * (basicData.recepts[machine.create]['kneading'] / 60))
+
+                for(let property in basicData.recepts[machine.create]){
+                    if (property === 'kneading'){
+                        break
+                    }else{
+                        let item = property
+                        let howMany = basicData.recepts[machine.create][property]
+                        storage.removeIngredients(item, howMany)
+                    }
+                }
             }
         }
 
         if (machine.producting === 'theTray') {
             if (this.checkDoughForTheTray(machine)) {
-                machines.machines.find(val => val.id === machineId).working = true;
-                machines.machines.find(val => val.id === machineId).finishTime = basicData.recepts[machine.create][machine.activity]
+                machines.machines.find(machine => machine.id === machineId).working = true;
+                machines.machines.find(machine => machine.id === machineId).finishTime = basicData.recepts[machine.create][machine.activity]
+                storage.removeDough(machine, machine.doAtOnce)
+                storage.removeOverheadCosts('electricity', machine.consumption * (basicData.recepts[machine.create]['dosing'] / 60))
+            }
+        }
+
+        if (machine.producting === 'finalProduct') {
+            if (this.checkTheTrayForFinalProduct(machine)) {
+                machines.machines.find(machine => machine.id === machineId).working = true;
+                machines.machines.find(machine => machine.id === machineId).finishTime = basicData.recepts[machine.create][machine.activity]
+                storage.removeTheTray(machine, machine.doAtOnce)
+                storage.removeOverheadCosts('electricity', machine.consumption * (basicData.recepts[machine.create]['baking'] / 60))
             }
         }
     }
@@ -875,10 +929,6 @@ class CreateProduct {
                 progresLine.style.width = machines.machines[i].progresLineWidth.toString() + 'px';
                 cas.textContent = machines.machines[i].finishTime;
 
-                console.log('cas', machines.machines[i].finishTime)
-                console.log('produkt', machines.machines[i].producting)
-                console.log('kolko', machines.machines[i].doAtOnce)
-
                 if (machines.machines[i].finishTime === 0){
                     machines.machines[i].working = false;
                     btn.style.display = 'block';
@@ -888,17 +938,17 @@ class CreateProduct {
                     this.switchImageText(machines.machines[i].id)
 
                     if (machines.machines[i].producting === 'finalProduct'){
-                        storage.addFinallProducts(machines.machines[i].create, basicData.recepts[machines.machines[i].create]['numberOfPieces'] * machines.machines[i].doAtOnce)
-                        render.preRenderProductOnInfoPanel(i)
+                        storage.addFinallProducts(i, basicData.recepts[machines.machines[i].create]['numberOfPieces'] * machines.machines[i].doAtOnce)
+
                     } 
                     if (machines.machines[i].producting === 'dough'){
-                        storage.addDough(machines.machines[i].create, machines.machines[i].doAtOnce)
-                        render.preRenderProductOnInfoPanel(i)
+                        storage.addDough(i, machines.machines[i].doAtOnce)
+
                     }
                     
                     if (machines.machines[i].producting === 'theTray') {
-                        storage.addTheTray(machines.machines[i].create, machines.machines[i].doAtOnce)
-                        render.preRenderProductOnInfoPanel(i)
+                        storage.addTheTray(i, machines.machines[i].doAtOnce)
+
                     }
                 }
             }

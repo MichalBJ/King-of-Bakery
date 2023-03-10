@@ -168,7 +168,7 @@ player.buyIngrediens();
 player.buyOverHeadCoast();
 
 
-//consumptionTheRent()
+consumptionTheRent()
 
 //gameFunction.selectItemToMade()
 
