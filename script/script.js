@@ -23,11 +23,10 @@ document.querySelectorAll(".main-menu > ul > li").forEach(function (li) {
 
         menuContainer.style.display = 'none';
         gameContainer.style.display = 'none';
-        console.log(li.textContent);
 
         if (li.innerText === 'NOVÁ HRA') {
-            console.log(li.textContent);
             gameContainer.style.display = 'block';
+            settingNewGame()
             
         }
         
@@ -54,20 +53,18 @@ document.querySelectorAll('.machine-body').forEach(function (body) {
     let progresBar = body.querySelector('.progres-bar');
     let progresLine = body.querySelector('.line');
 
-    console.log('btn', btn)
-
     btn.addEventListener('click', function () {
         btn.style.display = 'none';
         progresBar.style.display = 'flex';
         let rychlost = parseInt(10000 / progresBar.offsetWidth);
         let cas = body.querySelector('.cas span');
         let newWidth = 0;
-        let newCas = 10;
+        let newCas = 20;
 
         console.log('hodnota', parseInt(1000 / progresBar.offsetWidth))
         console.log('rychlost', rychlost)
 
-        let progresanimation = setInterval(() => {
+        let progresanimation = window.setInterval(() => {
             newWidth += 1;
             if (newWidth % (parseInt(1000 / rychlost) - 1) === 0) {
                 newCas -= 1;
@@ -160,10 +157,6 @@ document.querySelectorAll('.machine .button-wraper .buy-button').forEach(functio
             }
             
         }
-
-        console.log('Mixery', machines.mixers.length)
-        console.log('Davkovače', machines.dispensers.length)
-        console.log('Pece', machines.owens.length)
     })
     
     
@@ -178,6 +171,12 @@ player.buyOverHeadCoast();
 //consumptionTheRent()
 
 //gameFunction.selectItemToMade()
+
+setInterval(() => {
+    createProduct.processOfMaking()
+
+}, 1000);
+
 
 
 console.log(window.screen.availWidth)

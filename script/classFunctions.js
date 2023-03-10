@@ -1,101 +1,108 @@
 class Storage {
 
     constructor() {
-        this.finalProducts = {
-            "bread": 0,
-            "rohlik": 0,
-            "bageta": 0,
-            "croisant": 0,
-            "makovnik": 0,
-            "muffin": 0,
-            "zemla": 0,
-            "donut": 0,
-            "siska": 0,
-            "sendvic": 0
+        this.allProducts = {
+            "finalProduct": {
+                "bread": 0,
+                "rohlik": 0,
+                "bageta": 0,
+                "croissant": 0,
+                "makovnik": 0,
+                "muffin": 0,
+                "zemla": 0,
+                "donut": 0,
+                "siska": 0,
+                "toast": 0
+            },
+            "dough": {
+                "bread": 0,
+                "rohlik": 0,
+                "bageta": 0,
+                "croissant": 0,
+                "makovnik": 0,
+                "muffin": 0,
+                "zemla": 0,
+                "donut": 0,
+                "siska": 0,
+                "toast": 0
+            },
+            "theTray": {
+                "bread": 0,
+                "rohlik": 0,
+                "bageta": 0,
+                "croissant": 0,
+                "makovnik": 0,
+                "muffin": 0,
+                "zemla": 0,
+                "donut": 0,
+                "siska": 0,
+                "toast": 0
+            }
         }
-        this.dough = {
-            "bread": 0,
-            "rohlik": 0,
-            "bageta": 0,
-            "croisant": 0,
-            "makovnik": 0,
-            "muffin": 0,
-            "zemla": 0,
-            "donut": 0,
-            "siska": 0,
-            "sendvic": 0
-        }
-        this.theTray = {
-            "bread": 0,
-            "rohlik": 0,
-            "bageta": 0,
-            "croisant": 0,
-            "makovnik": 0,
-            "muffin": 0,
-            "zemla": 0,
-            "donut": 0,
-            "siska": 0,
-            "sendvic": 0
-        }
+
         this.overHeadCosts = {
             "electricity": 1000,
             "theRent": 1
         }
-        this.money = 1000
+        this.money = 3000
         this.ingredients = {
-            "flour": 0,
-            "water": 0,
-            "yeast": 0,
-            "cumin": 0,
-            "milk": 0,
-            "oil": 0,
-            "sugar": 0,
-            "butter": 0,
-            "eggs": 0,
-            "poppy": 0,
-            "chocolate": 0,
-            "jam": 0
+            "flour": 1000,
+            "water": 1000,
+            "yeast": 1000,
+            "cumin": 1000,
+            "milk": 1000,
+            "oil": 1000,
+            "sugar": 1000,
+            "butter": 1000,
+            "eggs": 1000,
+            "poppy": 1000,
+            "chocolate": 1000,
+            "jam": 1000
         }
     }
 
     addFinallProducts(item, howMany){
-        this.finalProducts[item] += howMany
+        this.allProducts['finalProduct'][item] += howMany
     }
 
     removeFinallProducts(item, howMany) {
-        this.finalProducts[item] -= howMany
+        this.allProducts['finalProduct'][item] -= howMany
     }
 
-    addDough(item, howMany) {
-        this.dough[item] += howMany
+    addDough(item, howMany){
+        this.allProducts['dough'][item] += howMany
     }
 
     removeDough(item, howMany) {
-        this.dough[item] -= howMany
+        this.allProducts['dough'][item] -= howMany
     }
 
     addTheTray(item, howMany) {
-        this.theTray[item] += howMany
+        this.allProducts['theTray'][item] += howMany
     }
 
     removeTheTray(item, howMany) {
-        this.theTray[item] -= howMany
+        this.allProducts['theTray'][item] -= howMany
     }
 
     addOverheadCosts(item, howMany) {
-        this.overHeadCosts[item] += howMany
+        this.overHeadCosts[item] += howMany;
+        render.preRenderIngredients(item, this.overHeadCosts[item])
     }
 
     removeOverheadCosts(item, howMany) {
         this.overHeadCosts[item] -= howMany
+        render.preRenderIngredients(item, this.overHeadCosts[item])
     }
 
     addIngredients(item, howMany) {
         this.ingredients[item] += howMany
+        render.preRenderIngredients(item, this.ingredients[item])
     }
 
     removeIngredients(item, howMany) {
         this.ingredients[item] -= howMany
+        render.preRenderIngredients(item, this.ingredients[item])
     }
 
     addMoney(howMany) {
@@ -112,34 +119,39 @@ class Storage {
 }
 
 class Machine {
-    constructor(id, machineName, price, consumption, doAtOnce) {
+    constructor(id, machineName, price, consumption, doAtOnce, producting, activity) {
         this.id = id;
         this.machineName = machineName;
         this.price = price;
         this.consumption = consumption;
         this.doAtOnce = doAtOnce;
+        this.producting = producting;
+        this.activity = activity;
         this.working = false;
+        this.create = '';
+        this.finishTime = 0;
+        this.progresLineWidth = 0
     }
 }
 
 class Machines {
 
     constructor() {
-        this.mixers = [];
-        this.dispensers = [];
-        this.owens = []; 
+        this.machines = []; 
     }
 
     buyNewMixer(mixerName) {
-        gameFunction.idGenerator();
-        let newId = gameFunction.id;
+        basicData.idGenerator();
+        let newId = basicData.id;
         let newMixer = new Machine(newId,
             basicData.machines[mixerName]['machineName'],
             basicData.machines[mixerName]['price'],
             basicData.machines[mixerName]['consuption'],
             basicData.machines[mixerName]['doAtOnce'],
+            'dough',
+            'kneading'
         );
-        this.mixers.push(newMixer);
+        this.machines.push(newMixer);
         render.createMachineElement(mixerName);
     }
 
@@ -152,15 +164,17 @@ class Machines {
     }
 
     buyNewDispenser(dispenserName){
-        gameFunction.idGenerator();
-        let newId = gameFunction.id;
+        basicData.idGenerator();
+        let newId = basicData.id;
         let newDispenser = new Machine(newId,
             basicData.machines[dispenserName]['machineName'],
             basicData.machines[dispenserName]['price'],
             basicData.machines[dispenserName]['consuption'],
             basicData.machines[dispenserName]['doAtOnce'],
-        );
-        this.dispensers.push(newDispenser);
+            'theTray',
+            'dosing'
+        )
+        this.machines.push(newDispenser);
         render.createMachineElement(dispenserName);
     }
 
@@ -173,15 +187,17 @@ class Machines {
     }
 
     buyNewOwen(owenName) {
-        gameFunction.idGenerator();
-        let newId = gameFunction.id;
+        basicData.idGenerator();
+        let newId = basicData.id;
         let newOwen = new Machine(newId,
             basicData.machines[owenName]['machineName'],
             basicData.machines[owenName]['price'],
             basicData.machines[owenName]['consuption'],
             basicData.machines[owenName]['doAtOnce'],
+            'finalProduct',
+            'baking'
         );
-        this.owens.push(newOwen);
+        this.machines.push(newOwen);
         render.createMachineElement(owenName);
     }
 
@@ -238,8 +254,8 @@ class Player {
                 let mustPay = user.ingrdiensCheckMoney(btn.title, quantity.value);
                 if (mustPay > 0) {
                     storage.removeMoney(mustPay)
-                    storage.addIngredients(btn.title, parseInt(quantity.value))
-                    render.preRenderIngredients(btn.title, storage.ingredients[btn.title])
+                    storage.addIngredients(btn.title, parseInt(quantity.value) * basicData.ingredients[btn.title]['quantity'])
+                    
                 } else {
                     alert('!!!Nemaš dostatok peňazi alebo nič nekupuješ!!!')
                 }
@@ -266,8 +282,7 @@ class Player {
                 let mustPay = user.overHeadCheckMoney(btn.title, quantity.value);
                 if (mustPay > 0) {
                     storage.removeMoney(mustPay)
-                    storage.addOverheadCosts(btn.title, parseInt(quantity.value))
-                    render.preRenderIngredients(btn.title, storage.overHeadCosts[btn.title])
+                    storage.addOverheadCosts(btn.title, parseInt(quantity.value) * basicData.overHeadCosts[btn.title]['quantity'])
                 } else {
                     alert('!!!Nemaš dostatok peňazi alebo nič nekupuješ!!!')
                 }
@@ -298,7 +313,7 @@ class Render{
                                 <h4>${basicData.machines[machine]['machineName']}</h4>
                                 <img src="img/products/bread.jpg">
                             </div>`
-        machineBody.id = gameFunction.id;
+        machineBody.id = basicData.id;
         let menu = this.createElement('div', 'menu', '');
         let li0 = this.createElement('li', 'none', '');
         let li1 = this.createElement('li', 'none', '');
@@ -310,16 +325,16 @@ class Render{
         let li7 = this.createElement('li', 'none', '');
         let li8 = this.createElement('li', 'none', '');
         let li9 = this.createElement('li', 'none', '');
-        let a0 = this.createElement('a', gameFunction.id, '');
-        let a1 = this.createElement('a', gameFunction.id, '');
-        let a2 = this.createElement('a', gameFunction.id, '');
-        let a3 = this.createElement('a', gameFunction.id, '');
-        let a4 = this.createElement('a', gameFunction.id, '');
-        let a5 = this.createElement('a', gameFunction.id, '');
-        let a6 = this.createElement('a', gameFunction.id, '');
-        let a7 = this.createElement('a', gameFunction.id, '');
-        let a8 = this.createElement('a', gameFunction.id, '');
-        let a9 = this.createElement('a', gameFunction.id, '');
+        let a0 = this.createElement('a', basicData.id, '');
+        let a1 = this.createElement('a', basicData.id, '');
+        let a2 = this.createElement('a', basicData.id, '');
+        let a3 = this.createElement('a', basicData.id, '');
+        let a4 = this.createElement('a', basicData.id, '');
+        let a5 = this.createElement('a', basicData.id, '');
+        let a6 = this.createElement('a', basicData.id, '');
+        let a7 = this.createElement('a', basicData.id, '');
+        let a8 = this.createElement('a', basicData.id, '');
+        let a9 = this.createElement('a', basicData.id, '');
         let img0 = this.createElement('img', 'none', '');
         let img1 = this.createElement('img', 'none', '');
         let img2 = this.createElement('img', 'none', '');
@@ -330,13 +345,13 @@ class Render{
         let img7 = this.createElement('img', 'none', '');
         let img8 = this.createElement('img', 'none', '');
         let img9 = this.createElement('img', 'none', '');
-        let btn = this.createElement('button', 'none', 'VYROBIŤ');
+        let buttonCreate = this.createElement('button', basicData.id, 'VYROBIŤ');
         let progresBar = this.createElement('div', 'progres-bar', '');
         let cas = this.createElement('div', 'cas', 'TIME');
         let span1 = this.createElement('span', 'time', '10');
         let span2 = this.createElement('span', 'none', 's');
         let progresLine = this.createElement('div', 'line', '');
-        btn.type = 'button';
+        buttonCreate.type = 'button';
         li0.style = "--i:0;";
         li1.style = "--i:1;";
         li2.style = "--i:2;";
@@ -380,49 +395,55 @@ class Render{
         img9.src = "img/products/muffin.jpg";
 
         a0.addEventListener('click', function () {
-            gameFunction.selectItemToMade(a0); 
+            createProduct.selectItemToMade(a0); 
         })
 
         a1.addEventListener('click', function () {
-            gameFunction.selectItemToMade(a1);
+            createProduct.selectItemToMade(a1);
         })
 
         a2.addEventListener('click', function () {
-            gameFunction.selectItemToMade(a2);
+            createProduct.selectItemToMade(a2);
         })
 
         a3.addEventListener('click', function () {
-            gameFunction.selectItemToMade(a3);
+            createProduct.selectItemToMade(a3);
         })
 
         a4.addEventListener('click', function () {
-            gameFunction.selectItemToMade(a4);
+            createProduct.selectItemToMade(a4);
         })
 
         a5.addEventListener('click', function () {
-            gameFunction.selectItemToMade(a5);
+            createProduct.selectItemToMade(a5);
         })
 
         a6.addEventListener('click', function () {
-            gameFunction.selectItemToMade(a6);
+            createProduct.selectItemToMade(a6);
         })
 
         a7.addEventListener('click', function () {
-            gameFunction.selectItemToMade(a7);
+            createProduct.selectItemToMade(a7);
         })
 
         a8.addEventListener('click', function () {
-            gameFunction.selectItemToMade(a8);
+            createProduct.selectItemToMade(a8);
         })
 
         a9.addEventListener('click', function () {
-            gameFunction.selectItemToMade(a9);
+            createProduct.selectItemToMade(a9);
+        })
+
+        buttonCreate.addEventListener('click', function () {
+            createProduct.setProductToMake(machineBody.id)
         })
 
         let toggle = this.createElement('div', 'toggle', 'Zvoľ produkt');
 
         toggle.addEventListener('click', function () {
-            menu.classList.toggle('active');
+            if (machines.machines.find(val => val.id === machineBody.id).working === false){
+               menu.classList.toggle('active'); 
+            }   
         });
 
         cas.appendChild(span1);
@@ -461,7 +482,7 @@ class Render{
         menu.appendChild(li9);
         menu.appendChild(toggle)
         machineBody.appendChild(progresBar)
-        machineBody.appendChild(btn)
+        machineBody.appendChild(buttonCreate)
         machineBody.appendChild(menu)
         mixers.appendChild(machineBody)
     }
@@ -471,10 +492,15 @@ class Render{
             item.textContent = newValue
         });
     }
+
+    preRenderProductOnInfoPanel(i){
+        document.querySelector('.' + machines.machines[i].producting + '-' + machines.machines[i].create).textContent = storage.allProducts[machines.machines[i].producting][machines.machines[i].create]
+    }
 }
 
 class BasicData {
     constructor(){
+        this.id;
         this.machines = {
             'mixerSHM200':{
                 'machineName': 'Mixer SHM 200',
@@ -608,7 +634,7 @@ class BasicData {
             },
             'theRent':{
                 'price': 0.5,
-                'quantity': 10
+                'quantity': 1
             }
         }
         this.recepts = {
@@ -617,10 +643,10 @@ class BasicData {
                 'water': 2.4,
                 'cumin': 120,
                 'yeast': 60,
-                'kneading': 60,
+                'kneading': 10,
                 'dosing': 30,
                 'baking': 90,
-                'numberOfPieces': 16,
+                'numberOfPieces': 6,
                 'priceOfOnePiece': 1,
                 'img': 'img/products/bread.jpg'
             },
@@ -632,7 +658,7 @@ class BasicData {
                 'kneading': 45,
                 'dosing': 90,
                 'baking': 90,
-                'numberOfPieces': 6,
+                'numberOfPieces': 16,
                 'priceOfOnePiece': 1,
                 'img': 'img/products/rohlik.jpg',
             },
@@ -746,27 +772,137 @@ class BasicData {
             }
         }
     }
+
+    idGenerator() {
+        this.id = uuidv4();
+    }
 }
 
-class GameFunction {
+class CreateProduct {
 
-    constructor(){
-        this.id = '';
-    }
     selectItemToMade(par){
-        let machineElement = document.getElementById(par.className)
-        let img = machineElement.querySelector('.actual-doing img')
-        let h4 = machineElement.querySelector('.actual-doing h4')
-        let menu = machineElement.querySelector('.menu')
+        let machineElement = document.getElementById(par.className);
+        let img = machineElement.querySelector('.actual-doing img');
+        let h4 = machineElement.querySelector('.actual-doing h4');
+        let menu = machineElement.querySelector('.menu');
 
-        img.src = basicData.recepts[par.title]['img']
-        img.style.display = 'block'
-        h4.style.display = 'none'
-        menu.classList.toggle('active')             
+        machines.machines.find(val => val.id === par.className).create = par.title
+    
+        img.src = basicData.recepts[par.title]['img'];
+        img.style.display = 'block';
+        h4.style.display = 'none';
+        menu.classList.toggle('active');             
     }
 
-    idGenerator(){
-        this.id = uuidv4()
+    switchImageText(id){
+        document.querySelector('[id="' + id + '"] .actual-doing img').style.display = 'none'
+        document.querySelector('[id="' + id + '"] .actual-doing h4').style.display = 'block'
+    }
+
+    checkIngrediensForDough(machine){
+        let permission = false;
+        for (const property in basicData.recepts[machine.create]) {
+            if (property === 'kneading') {
+                break
+            }
+
+            if (storage.ingredients[property] > (basicData.recepts[machine.create][property] * machine.doAtOnce)) {
+                permission = true
+            } else {
+                permission = false
+                alert('Maš nedostatok: ' + property)
+                break
+            }
+        }
+
+        if (permission){
+            const electricity = machine.consumption * (basicData.recepts[machine.create]['kneading'] / 60)
+
+            if (storage.overHeadCosts['electricity'] > electricity) {
+                permission = true;
+            } else {
+                permission = false;
+                alert('Nemaš dostatok elektriky')
+            }
+        }
+        return permission
+    }
+
+    checkDoughForTheTray(machine){
+        if(storage.allProducts['dough'][machine.create] > 0) {
+            return true
+        }
+    }
+
+    setProductToMake(machineId) {
+        const machine = machines.machines.find(val => val.id === machineId);
+
+        console.log('meno pristroja', machine.machineName);
+        console.log('chcem vyrobit', machine.create); // vyrobok
+        console.log('ktora cast produktu', machine.producting); // typ
+
+        if (machine.producting === 'dough') {
+            if (this.checkIngrediensForDough(machine)) {
+                console.log('mozem?', this.checkIngrediensForDough(machine))
+                machines.machines.find(val => val.id === machineId).working = true;
+                machines.machines.find(val => val.id === machineId).finishTime = basicData.recepts[machine.create][machine.activity]
+            }
+        }
+
+        if (machine.producting === 'theTray') {
+            if (this.checkDoughForTheTray(machine)) {
+                machines.machines.find(val => val.id === machineId).working = true;
+                machines.machines.find(val => val.id === machineId).finishTime = basicData.recepts[machine.create][machine.activity]
+            }
+        }
+    }
+
+    processOfMaking(){
+        for(let i = 0; i < machines.machines.length; i++){
+            if (machines.machines[i].working){
+                let machine = document.querySelector('[id="' + machines.machines[i].id + '"]');
+                let btn = machine.querySelector('button');
+                let progresBar = machine.querySelector('.progres-bar');
+                let progresLine = machine.querySelector('.line');
+                let cas = machine.querySelector('.cas span');
+                let newWidth = progresBar.offsetWidth / basicData.recepts[machines.machines[i].create][machines.machines[i].activity];
+
+                machines.machines[i].progresLineWidth += newWidth;
+                btn.style.display = 'none';
+                progresBar.style.display = 'flex';
+
+                machines.machines[i].finishTime -= 1;
+                progresLine.style.width = machines.machines[i].progresLineWidth.toString() + 'px';
+                cas.textContent = machines.machines[i].finishTime;
+
+                console.log('cas', machines.machines[i].finishTime)
+                console.log('produkt', machines.machines[i].producting)
+                console.log('kolko', machines.machines[i].doAtOnce)
+
+                if (machines.machines[i].finishTime === 0){
+                    machines.machines[i].working = false;
+                    btn.style.display = 'block';
+                    progresBar.style.display = 'none';
+                    progresLine.style.display = 0;
+                    machines.machines[i].progresLineWidth = 0;
+                    this.switchImageText(machines.machines[i].id)
+
+                    if (machines.machines[i].producting === 'finalProduct'){
+                        storage.addFinallProducts(machines.machines[i].create, basicData.recepts[machines.machines[i].create]['numberOfPieces'] * machines.machines[i].doAtOnce)
+                        render.preRenderProductOnInfoPanel(i)
+                    } 
+                    if (machines.machines[i].producting === 'dough'){
+                        storage.addDough(machines.machines[i].create, machines.machines[i].doAtOnce)
+                        render.preRenderProductOnInfoPanel(i)
+                    }
+                    
+                    if (machines.machines[i].producting === 'theTray') {
+                        storage.addTheTray(machines.machines[i].create, machines.machines[i].doAtOnce)
+                        render.preRenderProductOnInfoPanel(i)
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -791,12 +927,19 @@ const consumptionTheRent = function () {
 }
 
 
+const settingNewGame = function () {
+    machines.buyNewMixer('mixerSHM200')
+    machines.buyNewDispenser('dispenserDRC200')
+    machines.buyNewOwen('owenHLN200')   
+}
+
+
 let storage = new Storage();
 let machines = new Machines();
 let basicData = new BasicData();
 let render = new Render();
 let player = new Player();
-let gameFunction = new GameFunction();
+let createProduct = new CreateProduct();
 
 
 

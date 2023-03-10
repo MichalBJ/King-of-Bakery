@@ -1,70 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+<html>
+
 <body>
-    <div class="prvy">
-        <div class="btn">stlac</div>
-    </div>
-    <div class="druhy">
-        <div class="btn2">novy</div>
-    </div>
-    <div class="treti">
-        <div class="btn3">prefarbiť</div>
-    </div>
-    
-
+    <h2>Using the <i>setInterval function</i> to start and stop incrementing a counter value in JavaScript</h2>
+    <button onclick="startFunction()">Start</button>
+    <button onclick="stopFunction()">Stop</button>
+    <h4>Counter value:</h4>
+    <span id="root" style="padding: 10px; background-color: lavender; border: 1px solid black;"> 0 </span>
     <script>
-        let aha = 5;
+      // element to show the counter value
+        const root = document.getElementById('root')
 
-        document.querySelectorAll('.btn').forEach(function (item) {
-            item.addEventListener('click', function () {
-                console.log('ahoj')
-                })
-            })
+        // setInterval function id
+        let intervalId = null
 
-        let btn2 = document.querySelector('.btn2');
+        // counter variable
+        let counter = 0;
 
-        console.log(btn2);
+        // 'Start' button click handler function
+        function startFunction() {
 
-
-        function klik() {
-            if (aha === 5) {
-                let btn2 = document.querySelector('.btn2');
-                btn2.addEventListener('click', function () {
-                    let body = document.querySelector('.prvy');
-                    let newbtn = document.createElement('div');
-                    newbtn.textContent = 'stlac';
-                    newbtn.classList.add('btn');
-                    body.appendChild(newbtn);
-
-                    newbtn.addEventListener('click', function () {
-                        console.log('moj')
-                    })
-
-
-                })
-            }
-            
+            // assigning the setInterval function to increment the counter value
+            intervalId = setInterval(() => {
+                root.innerHTML = counter
+                counter++;
+            }, 1000);
         }
-
-        document.querySelector('.btn3').addEventListener('click', function () {
-            
-            let items = document.querySelectorAll('.btn');
-
-            for (let i = 0; i<items.length; i++){
-                console.log(i);
-                items[i].style.color = 'red';
-            }
-            
-        })
-
-        klik()
-        
+        // 'Stop' button click handler function
+        function stopFunction() {
+            // stopping the setInterval function using the clearInterval function
+            clearInterval(intervalId);
+        }
     </script>
 </body>
+
 </html>
