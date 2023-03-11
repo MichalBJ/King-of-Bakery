@@ -234,6 +234,7 @@ class Machines {
 class Player {
     constructor(){
         this.prestige = 0;
+        this.haveRecepts = ['bread', 'rohlik', 'bageta', 'croissant', 'makovnik', 'muffin', 'zemla', 'donut', 'siska', 'toast']
     }
 
     setValueOfQuantity(){
@@ -519,8 +520,12 @@ class Render{
             document.querySelector('.' + whatTypeRender + '-' + machines.machines[i].create).textContent = storage.allProducts[whatTypeRender][machines.machines[i].create]
         }else{
             document.querySelector('.' + whatTypeRender + '-' + i.create).textContent = storage.allProducts[whatTypeRender][i.create]
-            }
         }
+    }
+
+    createHtmlElementsForCustomer() {
+
+    }
 }
 
 class BasicData {
@@ -796,6 +801,31 @@ class BasicData {
                 'img': 'img/products/muffin.jpg'
             }
         }
+        this.menName = ['Lukáš', 'Martin', 'Peter', 'Ján', 'Michal', 'Maroš', 'Tomáš', 'Marián', 'Alex', 'Pavol', 'Juraj', 'Martin', 'Karol', 'Tibor', 'Andrej', 'Milan', 'Matej', 'Patrik', 'Adam']
+        this.womenName = ['Lucia', 'Jana', 'Katarina', 'Ľudmila', 'Maria', 'Alena', 'Renata', 'Zuzana', 'Sandra', 'Ema', 'Terezka', 'Monika', 'Andrea', 'Marianna', 'Petra', 'Viktoria', 'Adela', 'Iveta', 'Ivana', 'Eva']
+        this.menFoto = ['../img/people/men/m01.jpg', 
+                        '../img/people/men/m02.jpg', 
+                        '../img/people/men/m03.jpg', 
+                        '../img/people/men/m04.jpg', 
+                        '../img/people/men/m05.jpg', 
+                        '../img/people/men/m06.jpg', 
+                        '../img/people/men/m07.jpg', 
+                        '../img/people/men/m08.jpg',]
+        this.womenFoto = ['../img/people/women/w01.jpg',
+                        '../img/people/women/w02.jpg',
+                        '../img/people/women/w03.jpg',
+                        '../img/people/women/w04.jpg',
+                        '../img/people/women/w05.jpg',
+                        '../img/people/women/w06.jpg',
+                        '../img/people/women/w07.jpg',
+                        '../img/people/women/w08.jpg',
+                        '../img/people/women/w09.jpg',
+                        '../img/people/women/w10.jpg',
+                        '../img/people/women/w11.jpg',
+                        '../img/people/women/w12.jpg',
+                        '../img/people/women/w13.jpg',
+                        '../img/people/women/w14.jpg'
+                        ]
     }
 
     idGenerator() {
@@ -831,7 +861,9 @@ class CreateProduct {
                 break
             }
 
-            if (storage.ingredients[property] > (basicData.recepts[machine.create][property] * machine.doAtOnce)) {
+            const result = storage.ingredients[property] - (basicData.recepts[machine.create][property] * machine.doAtOnce)
+
+            if (result >= 0){
                 permission = true
             } else {
                 permission = false
@@ -841,9 +873,9 @@ class CreateProduct {
         }
 
         if (permission){
-            const electricity = machine.consumption * (basicData.recepts[machine.create]['kneading'] / 60)
+            const electricity = storage.overHeadCosts['electricity'] - (machine.consumption * (basicData.recepts[machine.create]['kneading'] / 60))
 
-            if (storage.overHeadCosts['electricity'] > electricity) {
+            if ( electricity >= 0 ) {
                 permission = true;
             } else {
                 permission = false;
@@ -854,25 +886,23 @@ class CreateProduct {
     }
 
     checkDoughForTheTray(machine){
-        const electricity = machine.consumption * (basicData.recepts[machine.create]['dosing'] / 60)
-        if(storage.allProducts['dough'][machine.create] > 0 && storage.overHeadCosts['electricity'] > electricity ) {
+        const electricity = storage.overHeadCosts['electricity'] - (machine.consumption * (basicData.recepts[machine.create]['dosing'] / 60))
+        const result = storage.allProducts['dough'][machine.create] - machine.doAtOnce
+        if (result >= 0 && electricity >= 0 ) {
             return true
         }
     }
 
     checkTheTrayForFinalProduct(machine) {
-        const electricity = machine.consumption * (basicData.recepts[machine.create]['baking'] / 60)
-        if (storage.allProducts['theTray'][machine.create] > 0 && storage.overHeadCosts['electricity'] > electricity) {
+        const electricity = storage.overHeadCosts['electricity'] - (machine.consumption * (basicData.recepts[machine.create]['baking'] / 60))
+        const result = storage.allProducts['theTray'][machine.create] - machine.doAtOnce
+        if ( result >= 0 &&  electricity >= 0) {
             return true
         }
     }
 
     sentProductToMake(machineId) {
         const machine = machines.machines.find(val => val.id === machineId);
-
-        console.log('meno pristroja', machine.machineName);
-        console.log('chcem vyrobit', machine.create); // vyrobok
-        console.log('ktora cast produktu', machine.producting); // typ
 
         if (machine.producting === 'dough') {
             if (this.checkIngrediensForDough(machine)) {
@@ -956,6 +986,115 @@ class CreateProduct {
     }
 }
 
+class Customer {
+    constructor(id, name, foto, wanted, payMoney){
+        this.id = id
+        this.name = name
+        this.foto = foto
+        this.wanted = wanted
+        this.payMoney = payMoney
+        this.timeRemaining = 60
+    }
+}
+
+class Customers {
+    constructor(){
+      this.customers = []
+      this.timeToNewCustomer = 30
+      this.gender = 0
+      this.items = {}
+      this.price = 0
+      this.lastManName = -1
+      this.lastManFoto = -1
+      this.lastWomanName = -1
+      this.lastWomanFoto = -1
+      this.allRecepts = [...player.haveRecepts] // nezabudni pri inicializacii novej hry tu vloziť prve tri recepty  
+    }
+    
+    randomNumberGenerator(range){
+          return Math.floor(Math.random()*range)
+    }
+
+    genderGenerator(){
+        this.gender = this.randomNumberGenerator(2)
+    }
+
+    setName(){
+        let name = ''
+        if (this.gender === 0){
+            if (this.lastManName > basicData.menName.length){
+                this.lastManName = 0
+                name = basicData.menName[this.lastManName]
+            }else{
+                this.lastManName += 1
+                name = basicData.menName[this.lastManName]
+            }
+        }else{
+            if (this.lastWomanName > basicData.womenName.length) {
+                this.lastWomanName = 0
+                name = basicData.womenName[this.lastWomanName]
+            } else {
+                this.lastWomanName += 1
+                name = basicData.womenName[this.lastWomanName]
+            }
+        }
+        return name
+    }
+
+    setFoto(){
+        let foto = ''
+        if (this.gender === 0) {
+            if (this.lastManFoto > basicData.menFoto.length) {
+                this.lastManFoto = 0
+                foto = basicData.menFoto[this.lastManFoto]
+            } else {
+                this.lastManFoto += 1
+                foto = basicData.menFoto[this.lastManFoto]
+            }
+        } else {
+            if (this.lastWomanFoto > basicData.womenFoto.length) {
+                this.lastWomanFoto = 0
+                foto = basicData.womenFoto[this.lastWomanFoto]
+            } else {
+                this.lastWomanFoto += 1
+                foto = basicData.womenFoto[this.lastWomanFoto]
+            }
+        } 
+        return foto
+    }
+
+    createOrder(){
+        const howManyItems = this.randomNumberGenerator(6) + 1
+        this.allRecepts = [...player.haveRecepts]
+        this.items = {}
+        for (let i=0; i < howManyItems; i++){
+            const newItem = this.allRecepts[this.randomNumberGenerator(this.allRecepts.length)]
+            const numberOfItem = this.randomNumberGenerator(basicData.recepts[newItem]['numberOfPieces']/2) + 1
+            this.allRecepts.splice(this.allRecepts.findIndex(item => item === newItem), 1)
+            this.items[newItem] = numberOfItem
+        }
+        return this.items
+    }
+
+    setOrderPrice(){
+        this.price = 0
+        for (let property in this.items){
+            console.log('čo', basicData.recepts[property], 'cena za kus', basicData.recepts[property]['priceOfOnePiece'], 'vysledna hodnota', (basicData.recepts[property]['priceOfOnePiece'] * this.items[property]))
+            
+            this.price += (basicData.recepts[property]['priceOfOnePiece'] * this.items[property])
+        }
+        return this.price 
+    }
+
+    addNewCustomer(){
+        basicData.idGenerator();
+        this.genderGenerator();
+        const newCustomer = new Customer(basicData.id, this.setName(), this.setFoto(), this.createOrder(), this.setOrderPrice())
+        this.customers.push(newCustomer)
+        render.createHtmlElementsForCustomer()
+    }
+}
+
 
 const consumptionTheRent = function () {
     let lastTime = 3;
@@ -990,6 +1129,10 @@ let basicData = new BasicData();
 let render = new Render();
 let player = new Player();
 let createProduct = new CreateProduct();
+let customers = new Customers()
+
+
+
 
 
 
