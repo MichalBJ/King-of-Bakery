@@ -3,7 +3,7 @@ class Storage {
     constructor() {
         this.allProducts = {
             "finalProduct": {
-                "bread": 0,
+                "chlieb": 0,
                 "rohlik": 0,
                 "bageta": 0,
                 "croissant": 0,
@@ -15,7 +15,7 @@ class Storage {
                 "toast": 0
             },
             "dough": {
-                "bread": 0,
+                "chlieb": 0,
                 "rohlik": 0,
                 "bageta": 0,
                 "croissant": 0,
@@ -27,7 +27,7 @@ class Storage {
                 "toast": 0
             },
             "theTray": {
-                "bread": 0,
+                "chlieb": 0,
                 "rohlik": 0,
                 "bageta": 0,
                 "croissant": 0,
@@ -234,7 +234,7 @@ class Machines {
 class Player {
     constructor(){
         this.prestige = 0;
-        this.haveRecepts = ['bread', 'rohlik', 'bageta', 'croissant', 'makovnik', 'muffin', 'zemla', 'donut', 'siska', 'toast']
+        this.haveRecepts = ['chlieb', 'rohlik', 'bageta', 'croissant', 'makovnik', 'muffin', 'zemla', 'donut', 'siska', 'toast']
     }
 
     setValueOfQuantity(){
@@ -393,7 +393,7 @@ class Render{
         a7.href = '#';
         a8.href = '#';
         a9.href = '#';
-        a0.title = 'bread';
+        a0.title = 'chlieb';
         a1.title = 'rohlik';
         a2.title = 'bageta';
         a3.title = 'zemla';
@@ -523,7 +523,51 @@ class Render{
         }
     }
 
-    createHtmlElementsForCustomer() {
+    createHtmlElementsForCustomer(customer) {
+        let shopSection = document.querySelector('.shop')
+        let customerBody= this.createElement('div', 'customer', '')
+        let customerHeader = this.createElement('div', 'customer-header', '')
+        let foto = this.createElement('img', 'none', '')
+        let nameWanted = this.createElement('div', 'name-wanted', '')
+        let customerName = this.createElement('h3', 'none', customer.name)
+        let p1 = this.createElement('p', 'none', 'Požaduje')
+        let order = this.createElement('div', 'wanted', '')
+        let requirementsLi = []
+        for (let i = 0; i < Object.keys(customer.wanted).length; i++){
+            let li = this.createElement('li', 'none', '')
+            requirementsLi.push(li)
+        }
+        let p2 = this.createElement('p', 'none', 'Hodnota nakupu: ')
+        let span2 = this.createElement('span', 'oreder-price', customer.payMoney)
+        let p3 = this.createElement('p', 'none', 'Odide za: ')
+        let span3 = this.createElement('span', 'oreder-time-remaining', customer.timeRemaining)
+        let button = this.createElement('button', 'btn-sell-products', 'Predať')
+
+        foto.src = customer.foto
+
+        for (let i=0; i < requirementsLi.length; i++){
+            requirementsLi[i].innerHTML = `${Object.keys(customer.wanted)[i]} <span>${customer.wanted[Object.keys(customer.wanted)[i]]}</span> ks`
+        }
+
+        for(let i=0; i < requirementsLi.length; i++){
+           order.appendChild(requirementsLi[i]) 
+        }
+        p2.appendChild(span2)
+        p3.appendChild(span3) 
+        nameWanted.appendChild(customerName)
+        nameWanted.appendChild(p1)
+        nameWanted.appendChild(order)
+        nameWanted.appendChild(p2)
+        nameWanted.appendChild(p3)
+        nameWanted.appendChild(button)
+        customerHeader.appendChild(foto)
+        customerHeader.appendChild(nameWanted)
+        customerBody.appendChild(customerHeader)
+        shopSection.appendChild(customerBody)
+
+
+
+
 
     }
 }
@@ -668,7 +712,7 @@ class BasicData {
             }
         }
         this.recepts = {
-            'bread': {
+            'chlieb': {
                 'flour': 3,
                 'water': 2.4,
                 'cumin': 120,
@@ -1000,7 +1044,7 @@ class Customer {
 class Customers {
     constructor(){
       this.customers = []
-      this.timeToNewCustomer = 30
+      this.timeToNewCustomer = 20
       this.gender = 0
       this.items = {}
       this.price = 0
@@ -1017,6 +1061,19 @@ class Customers {
 
     genderGenerator(){
         this.gender = this.randomNumberGenerator(2)
+    }
+
+    howManyPiecesGenerator(item){
+        let pieces = 0
+        let number = this.randomNumberGenerator(100);
+        if (number <= 70){
+            pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] / 2) + 1
+        }else if (number > 70 && number <= 95){
+            pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) + Math.floor(basicData.recepts[item]['numberOfPieces'] / 4)) + 2
+        }else if(number > 95){
+            pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces']) + 3
+        }
+        return pieces
     }
 
     setName(){
@@ -1069,7 +1126,7 @@ class Customers {
         this.items = {}
         for (let i=0; i < howManyItems; i++){
             const newItem = this.allRecepts[this.randomNumberGenerator(this.allRecepts.length)]
-            const numberOfItem = this.randomNumberGenerator(basicData.recepts[newItem]['numberOfPieces']/2) + 1
+            const numberOfItem = this.howManyPiecesGenerator(newItem)
             this.allRecepts.splice(this.allRecepts.findIndex(item => item === newItem), 1)
             this.items[newItem] = numberOfItem
         }
@@ -1079,8 +1136,6 @@ class Customers {
     setOrderPrice(){
         this.price = 0
         for (let property in this.items){
-            console.log('čo', basicData.recepts[property], 'cena za kus', basicData.recepts[property]['priceOfOnePiece'], 'vysledna hodnota', (basicData.recepts[property]['priceOfOnePiece'] * this.items[property]))
-            
             this.price += (basicData.recepts[property]['priceOfOnePiece'] * this.items[property])
         }
         return this.price 
@@ -1091,7 +1146,24 @@ class Customers {
         this.genderGenerator();
         const newCustomer = new Customer(basicData.id, this.setName(), this.setFoto(), this.createOrder(), this.setOrderPrice())
         this.customers.push(newCustomer)
-        render.createHtmlElementsForCustomer()
+        render.createHtmlElementsForCustomer(this.customers.at(-1))
+    }
+
+    timeGenerator(){
+        let time = this.randomNumberGenerator(10) + 10
+        return time
+
+    }
+
+    timerToNewCustomer(){
+        if (this.timeToNewCustomer === 0){
+            this.addNewCustomer()
+            this.timeToNewCustomer = this.timeGenerator()
+        }else{
+            this.timeToNewCustomer -= 1
+        }
+        document.querySelector('.timer-minutes').textContent = ('0' + Math.floor(this.timeToNewCustomer / 60)).slice(-2)
+        document.querySelector('.timer-sekundes').textContent = ('0' + this.timeToNewCustomer % 60).slice(-2)
     }
 }
 

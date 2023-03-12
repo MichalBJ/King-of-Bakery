@@ -132,6 +132,7 @@ consumptionTheRent()
 
 setInterval(() => {
     createProduct.processOfMaking()
+    customers.timerToNewCustomer()
 
 }, 1000);
 
