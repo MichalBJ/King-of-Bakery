@@ -3,9 +3,9 @@ class Storage {
     constructor() {
         this.allProducts = {
             "finalProduct": {
-                "chlieb": 0,
-                "rohlik": 0,
-                "bageta": 0,
+                "chlieb": 20,
+                "rohlik": 20,
+                "bageta": 20,
                 "croissant": 0,
                 "makovnik": 0,
                 "muffin": 0,
@@ -126,7 +126,8 @@ class Storage {
     }
 
     addMoney(howMany) {
-        this.money += howMany.toFixed(2)
+        console.log(howMany)
+        this.money += howMany
         render.preRenderMoney()
     }
 
@@ -234,7 +235,17 @@ class Machines {
 class Player {
     constructor(){
         this.prestige = 0;
-        this.haveRecepts = ['chlieb', 'rohlik', 'bageta', 'croissant', 'makovnik', 'muffin', 'zemla', 'donut', 'siska', 'toast']
+        this.haveRecepts = ['chlieb', 'rohlik', 'bageta']   
+    }
+
+    addPrestige(howMany){
+        this.prestige += howMany
+        render.preRenderPrestige()
+    }
+
+    removePrestige(howMany){
+        this.prestige -= howMany
+        render.preRenderPrestige()
     }
 
     setValueOfQuantity(){
@@ -316,7 +327,7 @@ class Player {
 
 class Render{
     preRenderMoney(){
-        document.querySelector('.many-and-prestige ul li .money').textContent = storage.money.toFixed(2);
+        document.querySelector('.money').textContent = storage.money.toFixed(2);
     }
 
     createElement(element, className, text){
@@ -530,19 +541,20 @@ class Render{
         let foto = this.createElement('img', 'none', '')
         let nameWanted = this.createElement('div', 'name-wanted', '')
         let customerName = this.createElement('h3', 'none', customer.name)
-        let p1 = this.createElement('p', 'none', 'Požaduje')
+        let p1 = this.createElement('p', 'none', 'Požaduje: ')
         let order = this.createElement('div', 'wanted', '')
         let requirementsLi = []
         for (let i = 0; i < Object.keys(customer.wanted).length; i++){
-            let li = this.createElement('li', 'none', '')
+            let li = this.createElement('li', 'wanted-' + Object.keys(customer.wanted)[i] , '')
             requirementsLi.push(li)
         }
         let p2 = this.createElement('p', 'none', 'Hodnota nakupu: ')
         let span2 = this.createElement('span', 'oreder-price', customer.payMoney)
-        let p3 = this.createElement('p', 'none', 'Odide za: ')
+        let p3 = this.createElement('p', 'time-leave', 'Odide za: ')
         let span3 = this.createElement('span', 'oreder-time-remaining', customer.timeRemaining)
         let button = this.createElement('button', 'btn-sell-products', 'Predať')
 
+        customerBody.id = customer.id
         foto.src = customer.foto
 
         for (let i=0; i < requirementsLi.length; i++){
@@ -552,6 +564,10 @@ class Render{
         for(let i=0; i < requirementsLi.length; i++){
            order.appendChild(requirementsLi[i]) 
         }
+        button.id = customer.id
+        button.addEventListener('click', function () {
+            customers.selProducts(button.id)
+        })
         p2.appendChild(span2)
         p3.appendChild(span3) 
         nameWanted.appendChild(customerName)
@@ -564,11 +580,10 @@ class Render{
         customerHeader.appendChild(nameWanted)
         customerBody.appendChild(customerHeader)
         shopSection.appendChild(customerBody)
+    }
 
-
-
-
-
+    preRenderPrestige(){
+        document.querySelector('.prestige').textContent = player.prestige
     }
 }
 
@@ -1043,16 +1058,20 @@ class Customer {
 
 class Customers {
     constructor(){
-      this.customers = []
-      this.timeToNewCustomer = 20
-      this.gender = 0
-      this.items = {}
-      this.price = 0
-      this.lastManName = -1
-      this.lastManFoto = -1
-      this.lastWomanName = -1
-      this.lastWomanFoto = -1
-      this.allRecepts = [...player.haveRecepts] // nezabudni pri inicializacii novej hry tu vloziť prve tri recepty  
+        this.customers = []
+        this.timeToNewCustomer = 5
+        this.gender = 0
+        this.items = {}
+        this.price = 0
+        this.lastManName = -1
+        this.lastManFoto = -1
+        this.lastWomanName = -1
+        this.lastWomanFoto = -1
+        this.allRecepts = [...player.haveRecepts]
+        this.rangeGroupA = 1  // tymto sa ovplyvňuje generovanie počtu kusov pre zakaznika produktov, ktoré majú na jednu davku 8 a menej kusov
+        this.rangeGroupB = 1  // tymto sa ovplyvňuje generovanie počtu kusov pre zakaznika produktov, ktoré majú na jednu davku viac ako 8 kusov 
+        this.countDificultA = 95
+        this.countDificultB = 99
     }
     
     randomNumberGenerator(range){
@@ -1066,20 +1085,35 @@ class Customers {
     howManyPiecesGenerator(item){
         let pieces = 0
         let number = this.randomNumberGenerator(100);
-        if (number <= 70){
-            pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] / 2) + 1
-        }else if (number > 70 && number <= 95){
-            pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) + Math.floor(basicData.recepts[item]['numberOfPieces'] / 4)) + 2
-        }else if(number > 95){
-            pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces']) + 3
+        if (basicData.recepts[item]['numberOfPieces'] < 9){
+            if (number <= 60){
+                pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) - 1) + 1
+            } else if (number > 60 && number <= 85){
+                pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) + this.rangeGroupA) + 1
+            } else if (number > 85 && number <= 97){
+                pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] + this.rangeGroupA) + 1
+            }else{
+                pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] + this.rangeGroupA) + this.rangeGroupA
+            }
+        }else{
+            if (number <= 60){
+                pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) - 2) + 1
+            } else if (number > 60 && number <= 85) {
+                pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] / 2) + this.rangeGroupB
+            } else if (number > 85 && number <= 97) {
+                pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) + Math.floor(basicData.recepts[item]['numberOfPieces'] / 4)) + this.rangeGroupB
+            } else if (number > 97) {
+                pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces']) + this.rangeGroupB
+            }
         }
+        
         return pieces
     }
 
     setName(){
         let name = ''
         if (this.gender === 0){
-            if (this.lastManName > basicData.menName.length){
+            if (this.lastManName >= basicData.menName.length - 1){
                 this.lastManName = 0
                 name = basicData.menName[this.lastManName]
             }else{
@@ -1087,7 +1121,7 @@ class Customers {
                 name = basicData.menName[this.lastManName]
             }
         }else{
-            if (this.lastWomanName > basicData.womenName.length) {
+            if (this.lastWomanName > basicData.womenName.length - 1) {
                 this.lastWomanName = 0
                 name = basicData.womenName[this.lastWomanName]
             } else {
@@ -1101,7 +1135,7 @@ class Customers {
     setFoto(){
         let foto = ''
         if (this.gender === 0) {
-            if (this.lastManFoto > basicData.menFoto.length) {
+            if (this.lastManFoto >= basicData.menFoto.length - 1) {
                 this.lastManFoto = 0
                 foto = basicData.menFoto[this.lastManFoto]
             } else {
@@ -1109,7 +1143,7 @@ class Customers {
                 foto = basicData.menFoto[this.lastManFoto]
             }
         } else {
-            if (this.lastWomanFoto > basicData.womenFoto.length) {
+            if (this.lastWomanFoto >= basicData.womenFoto.length - 1) {
                 this.lastWomanFoto = 0
                 foto = basicData.womenFoto[this.lastWomanFoto]
             } else {
@@ -1121,10 +1155,19 @@ class Customers {
     }
 
     createOrder(){
-        const howManyItems = this.randomNumberGenerator(6) + 1
         this.allRecepts = [...player.haveRecepts]
+        let countRequests = 0
+
+        if (this.allRecepts.length < 6){
+            countRequests = this.allRecepts.length
+        }else{
+            countRequests = 6
+        }
+
+        const howManyProducts = this.randomNumberGenerator(countRequests) + 1
         this.items = {}
-        for (let i=0; i < howManyItems; i++){
+
+        for (let i = 0; i < howManyProducts; i++){
             const newItem = this.allRecepts[this.randomNumberGenerator(this.allRecepts.length)]
             const numberOfItem = this.howManyPiecesGenerator(newItem)
             this.allRecepts.splice(this.allRecepts.findIndex(item => item === newItem), 1)
@@ -1149,15 +1192,29 @@ class Customers {
         render.createHtmlElementsForCustomer(this.customers.at(-1))
     }
 
+    howManyCustomersAtOnce(){
+        const percent = this.randomNumberGenerator(100)
+        let count = 1
+        if(percent < this.countDificultA){
+            count = 1
+        }else if(percent >= this.countDificultA && percent < this.countDificultB ){
+            count = 2
+        }else if(percent >= this.countDificultB){
+            count = 3
+        }
+        return count
+    }
+
     timeGenerator(){
         let time = this.randomNumberGenerator(10) + 10
         return time
-
     }
 
     timerToNewCustomer(){
         if (this.timeToNewCustomer === 0){
-            this.addNewCustomer()
+            for (let i=0; i < this.howManyCustomersAtOnce(); i++){
+                this.addNewCustomer()
+            }
             this.timeToNewCustomer = this.timeGenerator()
         }else{
             this.timeToNewCustomer -= 1
@@ -1165,7 +1222,84 @@ class Customers {
         document.querySelector('.timer-minutes').textContent = ('0' + Math.floor(this.timeToNewCustomer / 60)).slice(-2)
         document.querySelector('.timer-sekundes').textContent = ('0' + this.timeToNewCustomer % 60).slice(-2)
     }
+
+    removeCustomers(customerID){
+        let customer = document.getElementById(customerID)
+        while (customer.hasChildNodes()) {
+            customer.removeChild(customer.firstChild)
+        }
+        customer.remove()
+        let customerIndex = customers.customers.findIndex(item => item === customerID)
+        customers.customers.splice(customers.customers[customerIndex], 1)
+    }
+
+    customerLife(){
+        let wasDelete=false
+        for(let i=0; i < customers.customers.length; i++){
+            if (wasDelete){
+                i -= 1
+                wasDelete = false
+            }
+            let customerElement = document.getElementById(customers.customers[i].id)
+            customerElement.querySelector('.time-leave span').textContent = customers.customers[i].timeRemaining
+            if(customers.customers[i].timeRemaining > 0){
+                customers.customers[i].timeRemaining -= 1
+                for(let a=0; a < Object.keys(customers.customers[i].wanted).length; a++){
+                    let nameItem = Object.keys(customers.customers[i].wanted)[a]
+                    let countItem = customers.customers[i].wanted[Object.keys(customers.customers[i].wanted)[a]]
+                    if (countItem > storage.allProducts['finalProduct'][nameItem] ){
+                        customerElement.querySelector('.wanted-' + nameItem).style.color = 'red';
+                    }else{
+                        customerElement.querySelector('.wanted-' + nameItem).style.color = 'white';
+                    }
+                }
+            }else{
+                wasDelete = true
+                this.removeCustomers(customers.customers[i].id)
+                player.removePrestige(1)
+            }
+        }
+    }
+
+    checkIfHaveAll(index){
+        let permission = false
+        for (let i = 0; i < Object.keys(customers.customers[index].wanted).length; i++){
+            let nameItem = Object.keys(customers.customers[index].wanted)[i]
+            let countItem = customers.customers[index].wanted[Object.keys(customers.customers[index].wanted)[i]]
+            if (storage.allProducts['finalProduct'][nameItem] >= countItem) {
+                permission = true
+            } else {
+                permission = false
+                break
+            }
+        }
+        return permission
+    }
+
+    howManyPrestigeGet(index){
+        const time = customers.customers[index].timeRemaining
+        if(time > 50){
+            player.addPrestige(3)
+        }else if(time <= 50 && time > 20 ){
+            player.addPrestige(2)
+        }else{
+            player.addPrestige(1)
+        }
+    }
+
+    selProducts(customerID){
+        const customerIndex = customers.customers.findIndex(value => value.id === customerID)
+        if(this.checkIfHaveAll(customerIndex)){
+            storage.addMoney(customers.customers[customerIndex].payMoney)
+            this.howManyPrestigeGet(customerIndex) 
+            this.removeCustomers(customerID)
+        }else{
+            alert('Niečo ti chyba!!!')
+        }
+    }
 }
+
+
 
 
 const consumptionTheRent = function () {
