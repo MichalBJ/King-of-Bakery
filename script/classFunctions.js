@@ -44,7 +44,7 @@ class Storage {
             "electricity": 1000,
             "theRent": 1
         }
-        this.money = 3000
+        this.money = 0
         this.ingredients = {
             "flour": 100,
             "water": 100,
@@ -63,45 +63,38 @@ class Storage {
 
     addFinallProducts(item, howMany){
         const typeToRender = 'finalProduct';
-        this.allProducts['finalProduct'][machines.machines[item].create] += howMany
+        this.allProducts['finalProduct'][item] += howMany
         render.preRenderProductOnInfoPanel(item, typeToRender)
     }
 
     removeFinallProducts(item, howMany) {
+        console.log(item)
         const typeToRender = 'finalProduct';
-        this.allProducts['finalProduct'][machines.machines[item].create] -= howMany
+        this.allProducts['finalProduct'][item] -= howMany
         render.preRenderProductOnInfoPanel(item, typeToRender)
     }
 
     addDough(item, howMany){
         const typeToRender = 'dough'
-        this.allProducts['dough'][machines.machines[item].create] += howMany
+        this.allProducts['dough'][item] += howMany
         render.preRenderProductOnInfoPanel(item, typeToRender)
     }
 
     removeDough(item, howMany){
         const typeToRender = 'dough'
-        if (typeof (item) === 'number'){
-            this.allProducts['dough'][machines.machines[item].create] -= howMany
-        } else {
-           this.allProducts['dough'][item.create] -= howMany 
-        }
+        this.allProducts['dough'][item] -= howMany
         render.preRenderProductOnInfoPanel(item, typeToRender)
     }
 
     addTheTray(item, howMany){
         const typeToRender = 'theTray';
-        this.allProducts['theTray'][machines.machines[item].create] += howMany
+        this.allProducts['theTray'][item] += howMany
         render.preRenderProductOnInfoPanel(item, typeToRender)
     }
 
     removeTheTray(item, howMany){
         const typeToRender = 'theTray';
-        if (typeof (item) === 'number'){
-            this.allProducts['theTray'][machines.machines[item].create] -= howMany
-        }else{
-            this.allProducts['theTray'][item.create] -= howMany 
-        }
+        this.allProducts['theTray'][item] -= howMany
         render.preRenderProductOnInfoPanel(item, typeToRender)
     }
 
@@ -525,12 +518,12 @@ class Render{
         });
     }
 
-    preRenderProductOnInfoPanel(i, whatTypeRender){
+    preRenderProductOnInfoPanel(item, whatTypeRender){
 
         if (typeof(i) === 'number'){
-            document.querySelector('.' + whatTypeRender + '-' + machines.machines[i].create).textContent = storage.allProducts[whatTypeRender][machines.machines[i].create]
+            document.querySelector('.' + whatTypeRender + '-' + item).textContent = storage.allProducts[whatTypeRender][item]
         }else{
-            document.querySelector('.' + whatTypeRender + '-' + i.create).textContent = storage.allProducts[whatTypeRender][i.create]
+            document.querySelector('.' + whatTypeRender + '-' + item).textContent = storage.allProducts[whatTypeRender][item]
         }
     }
 
@@ -732,23 +725,23 @@ class BasicData {
                 'water': 2.4,
                 'cumin': 120,
                 'yeast': 60,
-                'kneading': 10,
-                'dosing': 11,
-                'baking': 11,
+                'kneading': 60,
+                'dosing': 30,
+                'baking': 90,
                 'numberOfPieces': 6,
-                'priceOfOnePiece': 1,
+                'priceOfOnePiece': 1.76,
                 'img': 'img/products/bread.jpg'
             },
             'rohlik':{
-                'flour': 3,
+                'flour': 0.6,
                 'milk': 0.4,
                 'oil': 0.2,
                 'yeast': 20,
                 'kneading': 45,
-                'dosing': 90,
-                'baking': 90,
+                'dosing': 60,
+                'baking': 20,
                 'numberOfPieces': 16,
-                'priceOfOnePiece': 1,
+                'priceOfOnePiece': 0.25,
                 'img': 'img/products/rohlik.jpg',
             },
             'bageta':{
@@ -757,10 +750,10 @@ class BasicData {
                 'sugar': 0.04,
                 'yeast': 40,
                 'kneading': 60,
-                'dosing': 60,
-                'baking': 90,
+                'dosing': 20,
+                'baking': 45,
                 'numberOfPieces': 8,
-                'priceOfOnePiece': 1,
+                'priceOfOnePiece': 0.38,
                 'img': 'img/products/bageta.jpg'
             },
             'zemla': {
@@ -768,11 +761,11 @@ class BasicData {
                 'butter': 75,
                 'milk': 0.38,
                 'yeast': 20,
-                'kneading': 60,
-                'dosing': 90,
-                'baking': 60,
+                'kneading': 45,
+                'dosing': 50,
+                'baking': 25,
                 'numberOfPieces': 12,
-                'priceOfOnePiece': 1,
+                'priceOfOnePiece': 0.28,
                 'img': 'img/products/zemla.jpg'
             },
             'croissant': {
@@ -783,10 +776,10 @@ class BasicData {
                 'eggs': 1,
                 'yeast': 15,
                 'kneading': 60,
-                'dosing': 90,
-                'baking': 60,
+                'dosing': 50,
+                'baking': 15,
                 'numberOfPieces': 12,
-                'priceOfOnePiece': 1,
+                'priceOfOnePiece': 0.49,
                 'img': 'img/products/croisant.jpg'
             },
             'makovnik': {
@@ -796,11 +789,11 @@ class BasicData {
                 'sugar': 1.7,
                 'poppy': 1700,
                 'butter': 640,
-                'kneading': 120,
-                'dosing': 60,
-                'baking': 90,
+                'kneading': 75,
+                'dosing': 90,
+                'baking': 50,
                 'numberOfPieces': 8,
-                'priceOfOnePiece': 1,
+                'priceOfOnePiece': 3.16,
                 'img': 'img/products/makovnik.jpg'
             },
             'donut': {
@@ -811,11 +804,11 @@ class BasicData {
                 'sugar': 0.08,
                 'yeast': 60,
                 'chocolate': 230,
-                'kneading': 120,
-                'dosing': 90,
-                'baking': 60,
+                'kneading': 30,
+                'dosing': 70,
+                'baking': 40,
                 'numberOfPieces': 12,
-                'priceOfOnePiece': 1,
+                'priceOfOnePiece': 0.69,
                 'img': 'img/products/donut.jpg'
             },
             'toast': {
@@ -824,11 +817,11 @@ class BasicData {
                 'water': 1.8,
                 'eggs': 6,
                 'yeast': 120,
-                'kneading': 90,
-                'dosing': 90,
-                'baking': 60,
+                'kneading': 30,
+                'dosing': 40,
+                'baking': 40,
                 'numberOfPieces': 6,
-                'priceOfOnePiece': 1,
+                'priceOfOnePiece': 1.42,
                 'img': 'img/products/sendvic.jpg'
             },
             'siska': {
@@ -838,11 +831,11 @@ class BasicData {
                 'sugar': 0.08,
                 'yeast': 20,
                 'jam': 500,
-                'kneading': 90,
-                'dosing': 90,
-                'baking': 60,
+                'kneading': 40,
+                'dosing': 75,
+                'baking': 50,
                 'numberOfPieces': 12,
-                'priceOfOnePiece': 1,
+                'priceOfOnePiece': 0.63,
                 'img': 'img/products/siska.jpg'
             },
             'muffin':{
@@ -852,11 +845,11 @@ class BasicData {
                 'eggs': 1,
                 'oil': 0.2,
                 'milk': 0.25,
-                'kneading': 120,
+                'kneading': 60,
                 'dosing': 90,
-                'baking': 60,
+                'baking': 30,
                 'numberOfPieces': 12,
-                'priceOfOnePiece': 1,
+                'priceOfOnePiece': 0.51,
                 'img': 'img/products/muffin.jpg'
             }
         }
@@ -985,7 +978,8 @@ class CreateProduct {
             if (this.checkDoughForTheTray(machine)) {
                 machines.machines.find(machine => machine.id === machineId).working = true;
                 machines.machines.find(machine => machine.id === machineId).finishTime = basicData.recepts[machine.create][machine.activity]
-                storage.removeDough(machine, machine.doAtOnce)
+                console.log('tutu', machine.create)
+                storage.removeDough(machine.create, machine.doAtOnce)
                 storage.removeOverheadCosts('electricity', machine.consumption * (basicData.recepts[machine.create]['dosing'] / 60))
             }
         }
@@ -994,7 +988,7 @@ class CreateProduct {
             if (this.checkTheTrayForFinalProduct(machine)) {
                 machines.machines.find(machine => machine.id === machineId).working = true;
                 machines.machines.find(machine => machine.id === machineId).finishTime = basicData.recepts[machine.create][machine.activity]
-                storage.removeTheTray(machine, machine.doAtOnce)
+                storage.removeTheTray(machine.create, machine.doAtOnce)
                 storage.removeOverheadCosts('electricity', machine.consumption * (basicData.recepts[machine.create]['baking'] / 60))
             }
         }
@@ -1027,16 +1021,17 @@ class CreateProduct {
                     this.switchImageText(machines.machines[i].id)
 
                     if (machines.machines[i].producting === 'finalProduct'){
-                        storage.addFinallProducts(i, basicData.recepts[machines.machines[i].create]['numberOfPieces'] * machines.machines[i].doAtOnce)
+                        let item = machines.machines[i].create
+                        let howMany = basicData.recepts[machines.machines[i].create]['numberOfPieces'] * machines.machines[i].doAtOnce
+                        storage.addFinallProducts(item, howMany)
 
                     } 
                     if (machines.machines[i].producting === 'dough'){
-                        storage.addDough(i, machines.machines[i].doAtOnce)
-
+                            storage.addDough(machines.machines[i].create, machines.machines[i].doAtOnce )
                     }
                     
                     if (machines.machines[i].producting === 'theTray') {
-                        storage.addTheTray(i, machines.machines[i].doAtOnce)
+                            storage.addTheTray(machines.machines[i].create, machines.machines[i].doAtOnce)
 
                     }
                 }
@@ -1287,11 +1282,21 @@ class Customers {
         }
     }
 
+    deleteSoldProducts(index){
+        for (let i = 0; i < Object.keys(customers.customers[index].wanted).length; i++){
+            let nameItem = Object.keys(customers.customers[index].wanted)[i]
+            let countItem = customers.customers[index].wanted[Object.keys(customers.customers[index].wanted)[i]]
+            console.log('meno', nameItem, 'kolko', countItem)
+            storage.removeFinallProducts(nameItem, countItem)
+        }
+    }
+
     selProducts(customerID){
         const customerIndex = customers.customers.findIndex(value => value.id === customerID)
         if(this.checkIfHaveAll(customerIndex)){
             storage.addMoney(customers.customers[customerIndex].payMoney)
-            this.howManyPrestigeGet(customerIndex) 
+            this.howManyPrestigeGet(customerIndex)
+            this.deleteSoldProducts(customerIndex) 
             this.removeCustomers(customerID)
         }else{
             alert('Niečo ti chyba!!!')
