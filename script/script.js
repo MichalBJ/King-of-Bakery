@@ -28,7 +28,12 @@ document.querySelectorAll(".main-menu > ul > li").forEach(function (li) {
             gameContainer.style.display = 'block';
             settingNewGame()
             
+        } else if (li.innerText === 'POKRAČOVAŤ'){
+            gameContainer.style.display = 'block';
+            saveAndLoadGame.loadGame()
         }
+
+        
         
     });
 });
@@ -46,12 +51,17 @@ document.querySelectorAll('.machine-body').forEach(function (item) {
 })
 
 
-/*animacia tlačitka pre uloženie hry */
+/*animacia tlačitka pre uloženie hry a samotne ulozenie */
 document.querySelector(".show-button-save").addEventListener("click", function () {
     document.querySelector(".show-button-save").classList.toggle('rotate-button');
     document.querySelector(".save-game").classList.toggle('anim-save-game');
     document.querySelector(".save-game > h5").classList.toggle('show-text'); 
 });
+
+document.querySelector('.save-game').addEventListener('click', function () {
+    saveAndLoadGame.saveGame()
+    
+})
 
 
 /*spušťanie rolety v sekcii sklad */
@@ -76,7 +86,13 @@ document.querySelectorAll(".in-game-nav ul li").forEach(function (item) {
         document.querySelector(".bakery").style.display = 'none';
         document.querySelector(".storage").style.display = 'none';
         document.querySelector(".shop").style.display = 'none';
-        document.querySelector(switchSection).style.display = 'grid';      
+        document.querySelector(switchSection).style.display = 'grid';
+        
+        if (document.querySelector('[title="' + item.title + '"]').title === 'shop'){
+            render.removeNewCustomerAlertElement()
+        }
+
+        
     })
 })
 
@@ -124,6 +140,8 @@ document.querySelectorAll('.machine .button-wraper .buy-button').forEach(functio
 player.setValueOfQuantity()
 player.buyIngrediens();
 player.buyOverHeadCoast();
+player.buyRecept();
+
 
 
 consumptionTheRent()
@@ -134,7 +152,7 @@ setInterval(() => {
     createProduct.processOfMaking()
     customers.timerToNewCustomer()
     customers.customerLife()
-
+    setGameDifficulty.levelsUp()  
 }, 1000);
 
 

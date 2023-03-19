@@ -3,9 +3,9 @@ class Storage {
     constructor() {
         this.allProducts = {
             "finalProduct": {
-                "chlieb": 20,
-                "rohlik": 20,
-                "bageta": 20,
+                "chlieb": 0,
+                "rohlik": 0,
+                "bageta": 0,
                 "croissant": 0,
                 "makovnik": 0,
                 "muffin": 0,
@@ -41,23 +41,23 @@ class Storage {
         }
 
         this.overHeadCosts = {
-            "electricity": 1000,
-            "theRent": 1
+            "electricity": 6000,
+            "theRent": 20
         }
         this.money = 0
         this.ingredients = {
-            "flour": 100,
-            "water": 100,
-            "yeast": 1000,
-            "cumin": 1000,
-            "milk": 100,
-            "oil": 100,
-            "sugar": 100,
-            "butter": 100,
-            "eggs": 100,
-            "poppy": 1000,
-            "chocolate": 1000,
-            "jam": 1000
+            "flour": 13.8,
+            "water": 9,
+            "yeast": 360,
+            "cumin": 360,
+            "milk": 1.4,
+            "oil": 0.8,
+            "sugar": 0.14,
+            "butter": 0,
+            "eggs": 0,
+            "poppy": 0,
+            "chocolate": 0,
+            "jam": 0
         }
     }
 
@@ -68,7 +68,6 @@ class Storage {
     }
 
     removeFinallProducts(item, howMany) {
-        console.log(item)
         const typeToRender = 'finalProduct';
         this.allProducts['finalProduct'][item] -= howMany
         render.preRenderProductOnInfoPanel(item, typeToRender)
@@ -119,13 +118,12 @@ class Storage {
     }
 
     addMoney(howMany) {
-        console.log(howMany)
         this.money += howMany
         render.preRenderMoney()
     }
 
     removeMoney(howMany) {
-        this.money -= howMany.toFixed(2)
+        this.money -= howMany
         render.preRenderMoney()
     }
 
@@ -133,9 +131,10 @@ class Storage {
 }
 
 class Machine {
-    constructor(id, machineName, price, consumption, doAtOnce, producting, activity) {
+    constructor(id, machineName, industryName, price, consumption, doAtOnce, producting, activity) {
         this.id = id;
         this.machineName = machineName;
+        this.industryName = industryName;
         this.price = price;
         this.consumption = consumption;
         this.doAtOnce = doAtOnce;
@@ -143,6 +142,7 @@ class Machine {
         this.activity = activity;
         this.working = false;
         this.create = '';
+        this.timeToCreate = 0
         this.finishTime = 0;
         this.progresLineWidth = 0
     }
@@ -159,6 +159,7 @@ class Machines {
         let newId = basicData.id;
         let newMixer = new Machine(newId,
             basicData.machines[mixerName]['machineName'],
+            basicData.machines[mixerName]['industryName'],
             basicData.machines[mixerName]['price'],
             basicData.machines[mixerName]['consuption'],
             basicData.machines[mixerName]['doAtOnce'],
@@ -166,7 +167,7 @@ class Machines {
             'kneading'
         );
         this.machines.push(newMixer);
-        render.createMachineElement(mixerName);
+        render.createMachineElement(mixerName, machines.machines[machines.machines.length - 1].id);
     }
 
     sellMixer() {
@@ -182,6 +183,7 @@ class Machines {
         let newId = basicData.id;
         let newDispenser = new Machine(newId,
             basicData.machines[dispenserName]['machineName'],
+            basicData.machines[dispenserName]['industryName'],
             basicData.machines[dispenserName]['price'],
             basicData.machines[dispenserName]['consuption'],
             basicData.machines[dispenserName]['doAtOnce'],
@@ -189,7 +191,7 @@ class Machines {
             'dosing'
         )
         this.machines.push(newDispenser);
-        render.createMachineElement(dispenserName);
+        render.createMachineElement(dispenserName, machines.machines[machines.machines.length - 1].id);
     }
 
     sellDispenser() {
@@ -205,6 +207,7 @@ class Machines {
         let newId = basicData.id;
         let newOwen = new Machine(newId,
             basicData.machines[owenName]['machineName'],
+            basicData.machines[owenName]['industryName'],
             basicData.machines[owenName]['price'],
             basicData.machines[owenName]['consuption'],
             basicData.machines[owenName]['doAtOnce'],
@@ -212,7 +215,7 @@ class Machines {
             'baking'
         );
         this.machines.push(newOwen);
-        render.createMachineElement(owenName);
+        render.createMachineElement(owenName, machines.machines[machines.machines.length - 1].id);
     }
 
     sellOwen() {
@@ -316,6 +319,38 @@ class Player {
             })
         })
     }
+
+    checkMoneyForRecept(receptName){
+        if ((storage.money - basicData.recepts[receptName]['price'])>= 0){
+            return true
+        }
+    }
+
+    buyRecept(){
+        let user = this
+        document.querySelectorAll('.recept').forEach(function (recept) {
+            const lastItem = recept.querySelector('.recept-body').children[recept.querySelector('.recept-body').children.length - 1]
+
+            if (lastItem.classList.contains('button-buy-recept')){
+                const buttonBuy = recept.querySelector('.button-buy-recept')
+                buttonBuy.addEventListener('click', function () {
+                let permission = user.checkMoneyForRecept(buttonBuy.title)
+                if(permission){
+                    user.haveRecepts.push(buttonBuy.title)
+                    storage.removeMoney(basicData.recepts[buttonBuy.title]['price'])
+                    buttonBuy.style.display = 'none'
+                    render.preRenderProductImage()
+                }else{
+                    alert('nemaš dosť penazi')
+                }
+            }) 
+            }
+            
+
+           
+            
+        })
+    }
 }
 
 class Render{
@@ -330,133 +365,70 @@ class Render{
         return newElement
     }
 
-    createMachineElement(machine){
+    createMachineElement(machine, id) {
+        let user = this
         let mixers = document.querySelector(basicData.machines[machine]['position']);
         let machineBody = this.createElement('div', 'machine-body', '');
         machineBody.innerHTML = `<img src="${basicData.machines[machine]['img']}" alt="miesic200">
                             <div class="actual-doing">
                                 <h4>${basicData.machines[machine]['machineName']}</h4>
-                                <img src="img/products/bread.jpg">
+                                <img src="img/products/chlieb.jpg">
                             </div>`
-        machineBody.id = basicData.id;
+        machineBody.id = id;
         let menu = this.createElement('div', 'menu', '');
-        let li0 = this.createElement('li', 'none', '');
-        let li1 = this.createElement('li', 'none', '');
-        let li2 = this.createElement('li', 'none', '');
-        let li3 = this.createElement('li', 'none', '');
-        let li4 = this.createElement('li', 'none', '');
-        let li5 = this.createElement('li', 'none', '');
-        let li6 = this.createElement('li', 'none', '');
-        let li7 = this.createElement('li', 'none', '');
-        let li8 = this.createElement('li', 'none', '');
-        let li9 = this.createElement('li', 'none', '');
-        let a0 = this.createElement('a', basicData.id, '');
-        let a1 = this.createElement('a', basicData.id, '');
-        let a2 = this.createElement('a', basicData.id, '');
-        let a3 = this.createElement('a', basicData.id, '');
-        let a4 = this.createElement('a', basicData.id, '');
-        let a5 = this.createElement('a', basicData.id, '');
-        let a6 = this.createElement('a', basicData.id, '');
-        let a7 = this.createElement('a', basicData.id, '');
-        let a8 = this.createElement('a', basicData.id, '');
-        let a9 = this.createElement('a', basicData.id, '');
-        let img0 = this.createElement('img', 'none', '');
-        let img1 = this.createElement('img', 'none', '');
-        let img2 = this.createElement('img', 'none', '');
-        let img3 = this.createElement('img', 'none', '');
-        let img4 = this.createElement('img', 'none', '');
-        let img5 = this.createElement('img', 'none', '');
-        let img6 = this.createElement('img', 'none', '');
-        let img7 = this.createElement('img', 'none', '');
-        let img8 = this.createElement('img', 'none', '');
-        let img9 = this.createElement('img', 'none', '');
-        let buttonCreate = this.createElement('button', basicData.id, 'VYROBIŤ');
+        let li = []
+        let a = []
+        let img = []
+
+        for(let i=0; i < 10; i++){
+            let newLi = user.createElement('li', 'none', '')
+            li.push(newLi)
+        }
+
+        for (let i = 0; i < 10; i++) {
+            let newA = user.createElement('a', id, '')
+            a.push(newA)
+        }
+
+        for (let i = 0; i < 10; i++) {
+            let newImg = user.createElement('img', 'none', '')
+            img.push(newImg)
+        }
+        
+        let buttonCreate = this.createElement('button', id, 'VYROBIŤ');
         let progresBar = this.createElement('div', 'progres-bar', '');
         let cas = this.createElement('div', 'cas', 'TIME');
         let span1 = this.createElement('span', 'time', '10');
         let span2 = this.createElement('span', 'none', 's');
         let progresLine = this.createElement('div', 'line', '');
         buttonCreate.type = 'button';
-        li0.style = "--i:0;";
-        li1.style = "--i:1;";
-        li2.style = "--i:2;";
-        li3.style = "--i:3;";
-        li4.style = "--i:4;";
-        li5.style = "--i:5;";
-        li6.style = "--i:6;";
-        li7.style = "--i:7;";
-        li8.style = "--i:8;";
-        li9.style = "--i:9;"; 
-        a0.href = '#';
-        a1.href = '#';
-        a2.href = '#';
-        a3.href = '#';
-        a4.href = '#';
-        a5.href = '#';
-        a6.href = '#';
-        a7.href = '#';
-        a8.href = '#';
-        a9.href = '#';
-        a0.title = 'chlieb';
-        a1.title = 'rohlik';
-        a2.title = 'bageta';
-        a3.title = 'zemla';
-        a4.title = 'croissant';
-        a5.title = 'makovnik';
-        a6.title = 'donut';
-        a7.title = 'toast';
-        a8.title = 'siska';
-        a9.title = 'muffin';
 
-        img0.src = "img/products/bread.jpg";
-        img1.src = "img/products/rohlik.jpg";
-        img2.src = "img/products/bageta.jpg";
-        img3.src = "img/products/zemla.jpg";
-        img4.src = "img/products/croisant.jpg";
-        img5.src = "img/products/makovnik.jpg";
-        img6.src = "img/products/donut.jpg";
-        img7.src = "img/products/sendvic.jpg";
-        img8.src = "img/products/siska.jpg";
-        img9.src = "img/products/muffin.jpg";
+        for(let i=0; i < li.length; i++){
+            li[i].style = "--i:" + i +";"
+        }
 
-        a0.addEventListener('click', function () {
-            createProduct.selectItemToMade(a0); 
-        })
+        for (let i = 0; i < a.length; i++) {
+            a[i].href = "#"
+            a[i].title = basicData.allReceptsName[i]
+        }
 
-        a1.addEventListener('click', function () {
-            createProduct.selectItemToMade(a1);
-        })
+        for (let i = 0; i < img.length; i++){
+            if(i < player.haveRecepts.length){
+                img[i].src = "img/products/"+ player.haveRecepts[i] + ".jpg"
+                img[i].title = player.haveRecepts[i]
+            }else{
+                img[i].src = "img/products/noproduct.jpg";
+                img[i].title = 'noProduct'     
+            }  
+        }
 
-        a2.addEventListener('click', function () {
-            createProduct.selectItemToMade(a2);
-        })
-
-        a3.addEventListener('click', function () {
-            createProduct.selectItemToMade(a3);
-        })
-
-        a4.addEventListener('click', function () {
-            createProduct.selectItemToMade(a4);
-        })
-
-        a5.addEventListener('click', function () {
-            createProduct.selectItemToMade(a5);
-        })
-
-        a6.addEventListener('click', function () {
-            createProduct.selectItemToMade(a6);
-        })
-
-        a7.addEventListener('click', function () {
-            createProduct.selectItemToMade(a7);
-        })
-
-        a8.addEventListener('click', function () {
-            createProduct.selectItemToMade(a8);
-        })
-
-        a9.addEventListener('click', function () {
-            createProduct.selectItemToMade(a9);
+        a.forEach(function (button) {
+            button.addEventListener('click', function () {
+                let img = button.querySelector('img')
+                if (img.title != 'noProduct'){ 
+                    createProduct.selectItemToMade(button);
+                }
+            })
         })
 
         buttonCreate.addEventListener('click', function () {
@@ -466,45 +438,28 @@ class Render{
         let toggle = this.createElement('div', 'toggle', 'Zvoľ produkt');
 
         toggle.addEventListener('click', function () {
-            if (machines.machines.find(val => val.id === machineBody.id).working === false){
-               menu.classList.toggle('active'); 
-            }   
+            if (machines.machines.find(val => val.id === machineBody.id).working === false) {
+                menu.classList.toggle('active');
+            }
         });
 
         cas.appendChild(span1);
         cas.appendChild(span2);
         progresBar.appendChild(cas);
         progresBar.appendChild(progresLine);
-        a0.appendChild(img0);
-        a1.appendChild(img1);
-        a2.appendChild(img2);
-        a3.appendChild(img3);
-        a4.appendChild(img4);
-        a5.appendChild(img5);
-        a6.appendChild(img6);
-        a7.appendChild(img7);
-        a8.appendChild(img8);
-        a9.appendChild(img9);
-        li0.appendChild(a0);
-        li1.appendChild(a1);
-        li2.appendChild(a2);
-        li3.appendChild(a3);
-        li4.appendChild(a4);
-        li5.appendChild(a5);
-        li6.appendChild(a6);
-        li7.appendChild(a7);
-        li8.appendChild(a8);
-        li9.appendChild(a9);
-        menu.appendChild(li0);
-        menu.appendChild(li1);
-        menu.appendChild(li2);
-        menu.appendChild(li3);
-        menu.appendChild(li4);
-        menu.appendChild(li5);
-        menu.appendChild(li6);
-        menu.appendChild(li7);
-        menu.appendChild(li8);
-        menu.appendChild(li9);
+
+        for(let i=0; i < a.length; i++){
+            a[i].appendChild(img[i])
+        }
+
+        for (let i = 0; i < li.length; i++) {
+            li[i].appendChild(a[i])
+        }
+
+        for (let i = 0; i < li.length; i++) {
+            menu.appendChild(li[i])
+        }
+        
         menu.appendChild(toggle)
         machineBody.appendChild(progresBar)
         machineBody.appendChild(buttonCreate)
@@ -514,12 +469,11 @@ class Render{
 
     preRenderIngredients(item, newValue){
         document.querySelectorAll('.' + item).forEach(function (item) {
-            item.textContent = newValue.toFixed(0)
+            item.textContent = newValue.toFixed(2)
         });
     }
 
     preRenderProductOnInfoPanel(item, whatTypeRender){
-
         if (typeof(i) === 'number'){
             document.querySelector('.' + whatTypeRender + '-' + item).textContent = storage.allProducts[whatTypeRender][item]
         }else{
@@ -542,7 +496,7 @@ class Render{
             requirementsLi.push(li)
         }
         let p2 = this.createElement('p', 'none', 'Hodnota nakupu: ')
-        let span2 = this.createElement('span', 'oreder-price', customer.payMoney)
+        let span2 = this.createElement('span', 'oreder-price', customer.payMoney.toFixed(2))
         let p3 = this.createElement('p', 'time-leave', 'Odide za: ')
         let span3 = this.createElement('span', 'oreder-time-remaining', customer.timeRemaining)
         let button = this.createElement('button', 'btn-sell-products', 'Predať')
@@ -578,6 +532,63 @@ class Render{
     preRenderPrestige(){
         document.querySelector('.prestige').textContent = player.prestige
     }
+
+    newCustomerAlertElement(){
+        let shopButton = document.querySelector('[title="shop"]');
+        let customerAlert = this.createElement('div', 'customer-alert', '');
+        let p = this.createElement('p', 'none', '+1')
+        customerAlert.appendChild(p)
+        shopButton.append(customerAlert)
+    }
+
+    removeNewCustomerAlertElement(){
+        let shopButton = document.querySelector('[title="shop"]');
+        while (shopButton.hasChildNodes()) {
+            shopButton.removeChild(shopButton.firstChild)
+        }
+        shopButton.textContent = 'PREDAJŇA'
+    }
+
+    progresLineProperWidth() {
+        for (let i = 0; i < machines.machines.length; i++) {
+            if (machines.machines[i].working) {
+                let machine = document.querySelector('[id="' + machines.machines[i].id + '"]');
+                let progresLine = machine.querySelector('.line');
+                progresLine.style.width = machines.machines[i].progresLineWidth.toString() + 'px';
+            }
+        }
+    }
+
+    preRenderProductImage(){
+        for(let i=0; i<machines.machines.length; i++){
+            let machine = document.getElementById(machines.machines[i].id)
+            let receptImage = 0
+            machine.querySelectorAll('.menu li a img').forEach(function (image) {
+                if (receptImage < player.haveRecepts.length) {
+                    image.src = "img/products/" + player.haveRecepts[receptImage] + ".jpg"
+                    image.title = player.haveRecepts[receptImage]
+                    receptImage +=1
+                } else {
+                    image.src = "img/products/noproduct.jpg";
+                    image.title = 'noProduct'
+                    receptImage += 1
+                }  
+            })  
+        }
+    }
+
+    saveSuccesAlert(){
+        let place = document.querySelector('.banner-img');
+        let saveBlock = this.createElement('div', 'succes-save-alert', '');
+        let text = this.createElement('h3', 'none', 'Hra úspešne uložena');
+        saveBlock.appendChild(text)
+        place.appendChild(saveBlock)
+
+        setTimeout(() => {
+            text.remove()
+            saveBlock.remove()
+        }, 1000);
+    }
 }
 
 class BasicData {
@@ -586,6 +597,7 @@ class BasicData {
         this.machines = {
             'mixerSHM200':{
                 'machineName': 'Mixer SHM 200',
+                'industryName': 'mixerSHM200',
                 'price':250,
                 'consuption': 200,
                 'doAtOnce': 1,
@@ -594,6 +606,7 @@ class BasicData {
             },
             'mixerSHM500': {
                 'machineName': 'Mixer SHM 500',
+                'industryName': 'mixerSHM500',
                 'price': 400,
                 'consuption': 500,
                 'doAtOnce': 2,
@@ -602,6 +615,7 @@ class BasicData {
             },
             'mixerSHM1000': {
                 'machineName': 'Mixer SHM 1000',
+                'industryName': 'mixerSHM1000',
                 'price': 650,
                 'consuption': 700,
                 'doAtOnce': 3,
@@ -611,6 +625,7 @@ class BasicData {
 
             'dispenserDRC200': {
                 'machineName': 'Davkovač DRC 200',
+                'industryName': 'dispenserDRC200',
                 'price': 250,
                 'consuption': 150,
                 'doAtOnce': 1,
@@ -619,6 +634,7 @@ class BasicData {
             },
             'dispenserDRC500': {
                 'machineName': 'Davkovač DRC 500',
+                'industryName': 'dispenserDRC500',
                 'price': 400,
                 'consuption': 400,
                 'doAtOnce': 2,
@@ -627,6 +643,7 @@ class BasicData {
             },
             'dispenserDRC1000': {
                 'machineName': 'Davkovač DRC 1000',
+                'industryName': 'dispenserDRC1000',
                 'price': 650,
                 'consuption': 550,
                 'doAtOnce': 3,
@@ -636,6 +653,7 @@ class BasicData {
             
             'owenHLN200': {
                 'machineName': 'Pec HLN 200',
+                'industryName': 'owenHLN200',
                 'price': 250,
                 'consuption': 400,
                 'doAtOnce': 1,
@@ -643,7 +661,8 @@ class BasicData {
                 'position': '.bakery-owens'
             },
             'owenHLN500': {
-                'machineName': 'Pec HLC 500',
+                'machineName': 'Pec HLN 500',
+                'industryName': 'owenHLN500',
                 'price': 400,
                 'consuption': 950,
                 'doAtOnce': 2,
@@ -652,6 +671,7 @@ class BasicData {
             },
             'owenHLN1000': {
                 'machineName': 'Pec HLN 1000',
+                'industryName': 'owenHLN1000',
                 'price': 650,
                 'consuption': 1400,
                 'doAtOnce': 3,
@@ -674,7 +694,7 @@ class BasicData {
             },
             "cumin": {
                 'price': 0.2,
-                'quantity': 10
+                'quantity': 30
             },
             "milk": {
                 'price': 0.65,
@@ -725,12 +745,12 @@ class BasicData {
                 'water': 2.4,
                 'cumin': 120,
                 'yeast': 60,
-                'kneading': 60,
+                'kneading': 50,
                 'dosing': 30,
-                'baking': 90,
+                'baking': 70,
                 'numberOfPieces': 6,
                 'priceOfOnePiece': 1.76,
-                'img': 'img/products/bread.jpg'
+                'img': 'img/products/chlieb.jpg'
             },
             'rohlik':{
                 'flour': 0.6,
@@ -749,7 +769,7 @@ class BasicData {
                 'water': 0.6,
                 'sugar': 0.04,
                 'yeast': 40,
-                'kneading': 60,
+                'kneading': 50,
                 'dosing': 20,
                 'baking': 45,
                 'numberOfPieces': 8,
@@ -766,7 +786,8 @@ class BasicData {
                 'baking': 25,
                 'numberOfPieces': 12,
                 'priceOfOnePiece': 0.28,
-                'img': 'img/products/zemla.jpg'
+                'img': 'img/products/zemla.jpg',
+                'price': 50,
             },
             'croissant': {
                 'flour': 0.5,
@@ -780,7 +801,8 @@ class BasicData {
                 'baking': 15,
                 'numberOfPieces': 12,
                 'priceOfOnePiece': 0.49,
-                'img': 'img/products/croisant.jpg'
+                'img': 'img/products/croissant.jpg',
+                'price': 35,
             },
             'makovnik': {
                 'flour': 2,
@@ -794,7 +816,9 @@ class BasicData {
                 'baking': 50,
                 'numberOfPieces': 8,
                 'priceOfOnePiece': 3.16,
-                'img': 'img/products/makovnik.jpg'
+                'img': 'img/products/makovnik.jpg',
+                'price': 40,
+
             },
             'donut': {
                 'flour': 0.75,
@@ -809,7 +833,8 @@ class BasicData {
                 'baking': 40,
                 'numberOfPieces': 12,
                 'priceOfOnePiece': 0.69,
-                'img': 'img/products/donut.jpg'
+                'img': 'img/products/donut.jpg',
+                'price': 55,
             },
             'toast': {
                 'flour': 3,
@@ -822,7 +847,8 @@ class BasicData {
                 'baking': 40,
                 'numberOfPieces': 6,
                 'priceOfOnePiece': 1.42,
-                'img': 'img/products/sendvic.jpg'
+                'img': 'img/products/toast.jpg',
+                'price': 65,
             },
             'siska': {
                 'flour': 0.5,
@@ -836,7 +862,8 @@ class BasicData {
                 'baking': 50,
                 'numberOfPieces': 12,
                 'priceOfOnePiece': 0.63,
-                'img': 'img/products/siska.jpg'
+                'img': 'img/products/siska.jpg',
+                'price': 60,
             },
             'muffin':{
                 'flour': 0.5,
@@ -850,7 +877,8 @@ class BasicData {
                 'baking': 30,
                 'numberOfPieces': 12,
                 'priceOfOnePiece': 0.51,
-                'img': 'img/products/muffin.jpg'
+                'img': 'img/products/muffin.jpg',
+                'price': 45,
             }
         }
         this.menName = ['Lukáš', 'Martin', 'Peter', 'Ján', 'Michal', 'Maroš', 'Tomáš', 'Marián', 'Alex', 'Pavol', 'Juraj', 'Martin', 'Karol', 'Tibor', 'Andrej', 'Milan', 'Matej', 'Patrik', 'Adam']
@@ -878,6 +906,7 @@ class BasicData {
                         '../img/people/women/w13.jpg',
                         '../img/people/women/w14.jpg'
                         ]
+        this.allReceptsName = ['chlieb', 'rohlik', 'bageta', 'croissant', 'makovnik', 'muffin', 'zemla', 'donut', 'siska', 'toast']
     }
 
     idGenerator() {
@@ -886,6 +915,10 @@ class BasicData {
 }
 
 class CreateProduct {
+    constructor (){
+        this.newWidth = 0
+        this.offsetWidth = 150
+    }
 
     selectItemToMade(par){
         let machineElement = document.getElementById(par.className);
@@ -960,6 +993,7 @@ class CreateProduct {
             if (this.checkIngrediensForDough(machine)) {
                 machines.machines.find(machine => machine.id === machineId).working = true;
                 machines.machines.find(machine => machine.id === machineId).finishTime = basicData.recepts[machine.create][machine.activity]
+                machines.machines.find(machine => machine.id === machineId).timeToCreate = basicData.recepts[machine.create][machine.activity]
                 storage.removeOverheadCosts('electricity', machine.consumption * (basicData.recepts[machine.create]['kneading'] / 60))
 
                 for(let property in basicData.recepts[machine.create]){
@@ -978,7 +1012,7 @@ class CreateProduct {
             if (this.checkDoughForTheTray(machine)) {
                 machines.machines.find(machine => machine.id === machineId).working = true;
                 machines.machines.find(machine => machine.id === machineId).finishTime = basicData.recepts[machine.create][machine.activity]
-                console.log('tutu', machine.create)
+                machines.machines.find(machine => machine.id === machineId).timeToCreate = basicData.recepts[machine.create][machine.activity]
                 storage.removeDough(machine.create, machine.doAtOnce)
                 storage.removeOverheadCosts('electricity', machine.consumption * (basicData.recepts[machine.create]['dosing'] / 60))
             }
@@ -988,6 +1022,7 @@ class CreateProduct {
             if (this.checkTheTrayForFinalProduct(machine)) {
                 machines.machines.find(machine => machine.id === machineId).working = true;
                 machines.machines.find(machine => machine.id === machineId).finishTime = basicData.recepts[machine.create][machine.activity]
+                machines.machines.find(machine => machine.id === machineId).timeToCreate = basicData.recepts[machine.create][machine.activity]
                 storage.removeTheTray(machine.create, machine.doAtOnce)
                 storage.removeOverheadCosts('electricity', machine.consumption * (basicData.recepts[machine.create]['baking'] / 60))
             }
@@ -1002,21 +1037,19 @@ class CreateProduct {
                 let progresBar = machine.querySelector('.progres-bar');
                 let progresLine = machine.querySelector('.line');
                 let cas = machine.querySelector('.cas span');
-                let newWidth = progresBar.offsetWidth / basicData.recepts[machines.machines[i].create][machines.machines[i].activity];
+                this.newWidth = this.offsetWidth / basicData.recepts[machines.machines[i].create][machines.machines[i].activity];
 
-                machines.machines[i].progresLineWidth += newWidth;
+                machines.machines[i].progresLineWidth = this.newWidth * Math.abs(machines.machines[i].finishTime - machines.machines[i].timeToCreate);
                 btn.style.display = 'none';
                 progresBar.style.display = 'flex';
-
-                machines.machines[i].finishTime -= 1;
-                progresLine.style.width = machines.machines[i].progresLineWidth.toString() + 'px';
+                machines.machines[i].finishTime -= 1; 
                 cas.textContent = machines.machines[i].finishTime;
-
+                progresLine.style.width = machines.machines[i].progresLineWidth.toString() + 'px';
+                
                 if (machines.machines[i].finishTime === 0){
                     machines.machines[i].working = false;
                     btn.style.display = 'block';
                     progresBar.style.display = 'none';
-                    progresLine.style.display = 0;
                     machines.machines[i].progresLineWidth = 0;
                     this.switchImageText(machines.machines[i].id)
 
@@ -1032,8 +1065,9 @@ class CreateProduct {
                     
                     if (machines.machines[i].producting === 'theTray') {
                             storage.addTheTray(machines.machines[i].create, machines.machines[i].doAtOnce)
-
                     }
+
+                    machines.machines[i].create = ''
                 }
             }
         }
@@ -1054,7 +1088,7 @@ class Customer {
 class Customers {
     constructor(){
         this.customers = []
-        this.timeToNewCustomer = 5
+        this.timeToNewCustomer = 320
         this.gender = 0
         this.items = {}
         this.price = 0
@@ -1062,15 +1096,14 @@ class Customers {
         this.lastManFoto = -1
         this.lastWomanName = -1
         this.lastWomanFoto = -1
-        this.allRecepts = [...player.haveRecepts]
-        this.rangeGroupA = 1  // tymto sa ovplyvňuje generovanie počtu kusov pre zakaznika produktov, ktoré majú na jednu davku 8 a menej kusov
-        this.rangeGroupB = 1  // tymto sa ovplyvňuje generovanie počtu kusov pre zakaznika produktov, ktoré majú na jednu davku viac ako 8 kusov 
-        this.countDificultA = 95
-        this.countDificultB = 99
+        this.allReceptsHaveToHave = ['chlieb', 'rohlik', 'bageta']
     }
     
     randomNumberGenerator(range){
-          return Math.floor(Math.random()*range)
+        console.log('prijal som', range)
+        let hodnota = Math.floor(Math.random()*range)
+        console.log('vraciam', hodnota)
+        return parseInt(hodnota)
     }
 
     genderGenerator(){
@@ -1079,29 +1112,40 @@ class Customers {
 
     howManyPiecesGenerator(item){
         let pieces = 0
-        let number = this.randomNumberGenerator(100);
+        let number = this.randomNumberGenerator(100) + 60;
+        console.log('pre produkt', item, 'number', number)
         if (basicData.recepts[item]['numberOfPieces'] < 9){
-            if (number <= 60){
+            if (number < 60){
                 pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) - 1) + 1
-            } else if (number > 60 && number <= 85){
-                pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) + this.rangeGroupA) + 1
-            } else if (number > 85 && number <= 97){
-                pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] + this.rangeGroupA) + 1
-            }else{
-                pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] + this.rangeGroupA) + this.rangeGroupA
+                console.log('A pod 60',pieces)
+            } else if (number >= 60 && number < 85){
+                pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) + setGameDifficulty.productRangeGroupA) + 1
+                console.log('A pod 85', pieces)
+            } else if (number >= 85 && number < 97){
+                pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] + setGameDifficulty.productRangeGroupA) + 1
+                console.log('A pod 97', pieces)
+            } else if (number >= 97){
+                pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] + setGameDifficulty.productRangeGroupA) + setGameDifficulty.rangeGroupA
+                console.log('A nad 97', pieces)
             }
         }else{
-            if (number <= 60){
+            if (number < 60){
                 pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) - 2) + 1
-            } else if (number > 60 && number <= 85) {
-                pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] / 2) + this.rangeGroupB
-            } else if (number > 85 && number <= 97) {
-                pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) + Math.floor(basicData.recepts[item]['numberOfPieces'] / 4)) + this.rangeGroupB
-            } else if (number > 97) {
-                pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces']) + this.rangeGroupB
+                console.log('B pod 60', pieces)
+            } else if (number >= 60 && number < 85) {
+                pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] / 2) + setGameDifficulty.productRangeGroupB
+                console.log('B pod 85', pieces)
+            } else if (number >= 85 && number < 97) {
+                let range = (basicData.recepts[item]['numberOfPieces'] / 2)
+                range += Math.floor(basicData.recepts[item]['numberOfPieces'] / 4)
+                pieces = this.randomNumberGenerator(range) + setGameDifficulty.rangeGroupB
+                console.log('B pod 97', pieces)
+            } else if (number >= 97) {
+                pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces']) + setGameDifficulty.productRangeGroupB
+                console.log('B nad 97', pieces)
             }
         }
-        
+        console.log('posielam kusy', pieces)
         return pieces
     }
 
@@ -1150,11 +1194,11 @@ class Customers {
     }
 
     createOrder(){
-        this.allRecepts = [...player.haveRecepts]
+        let allRecepts = [...this.allReceptsHaveToHave]
         let countRequests = 0
 
-        if (this.allRecepts.length < 6){
-            countRequests = this.allRecepts.length
+        if (allRecepts.length < 6){
+            countRequests = allRecepts.length
         }else{
             countRequests = 6
         }
@@ -1163,10 +1207,15 @@ class Customers {
         this.items = {}
 
         for (let i = 0; i < howManyProducts; i++){
-            const newItem = this.allRecepts[this.randomNumberGenerator(this.allRecepts.length)]
+            const newItem = allRecepts[this.randomNumberGenerator(allRecepts.length)]
+            console.log('newItem', newItem)
             const numberOfItem = this.howManyPiecesGenerator(newItem)
-            this.allRecepts.splice(this.allRecepts.findIndex(item => item === newItem), 1)
+            console.log('number of item', numberOfItem)
+            console.log('index', allRecepts.findIndex(item => item === newItem))
+            allRecepts.splice(allRecepts.findIndex(item => item === newItem), 1)
             this.items[newItem] = numberOfItem
+            console.log('vsetky recpty', allRecepts)
+            console.log('----------------------------------')
         }
         return this.items
     }
@@ -1176,7 +1225,7 @@ class Customers {
         for (let property in this.items){
             this.price += (basicData.recepts[property]['priceOfOnePiece'] * this.items[property])
         }
-        return this.price 
+        return this.price
     }
 
     addNewCustomer(){
@@ -1190,27 +1239,30 @@ class Customers {
     howManyCustomersAtOnce(){
         const percent = this.randomNumberGenerator(100)
         let count = 1
-        if(percent < this.countDificultA){
+        if(percent < setGameDifficulty.chanceTwoCustomers){
             count = 1
-        }else if(percent >= this.countDificultA && percent < this.countDificultB ){
+        } else if (percent >= setGameDifficulty.chanceTwoCustomers && percent < setGameDifficulty.chanceThreeCustomers ){
             count = 2
-        }else if(percent >= this.countDificultB){
+        } else if (percent >= setGameDifficulty.chanceThreeCustomers && percent < setGameDifficulty.chanceFourCustomers){
             count = 3
-        }
+        } else if (percent >= setGameDifficulty.chanceFourCustomers)
+            count = 4
         return count
     }
 
     timeGenerator(){
-        let time = this.randomNumberGenerator(10) + 10
+        let time = this.randomNumberGenerator(setGameDifficulty.rangeTime) + setGameDifficulty.minTime
         return time
     }
 
     timerToNewCustomer(){
         if (this.timeToNewCustomer === 0){
-            for (let i=0; i < this.howManyCustomersAtOnce(); i++){
+            const howManyCustomers = this.howManyCustomersAtOnce()
+            for (let i = 0; i < howManyCustomers; i++){
                 this.addNewCustomer()
             }
             this.timeToNewCustomer = this.timeGenerator()
+            render.newCustomerAlertElement()
         }else{
             this.timeToNewCustomer -= 1
         }
@@ -1224,7 +1276,7 @@ class Customers {
             customer.removeChild(customer.firstChild)
         }
         customer.remove()
-        let customerIndex = customers.customers.findIndex(item => item === customerID)
+        let customerIndex = customers.customers.findIndex(item => item.id === customerID)
         customers.customers.splice(customers.customers[customerIndex], 1)
     }
 
@@ -1286,7 +1338,6 @@ class Customers {
         for (let i = 0; i < Object.keys(customers.customers[index].wanted).length; i++){
             let nameItem = Object.keys(customers.customers[index].wanted)[i]
             let countItem = customers.customers[index].wanted[Object.keys(customers.customers[index].wanted)[i]]
-            console.log('meno', nameItem, 'kolko', countItem)
             storage.removeFinallProducts(nameItem, countItem)
         }
     }
@@ -1302,10 +1353,180 @@ class Customers {
             alert('Niečo ti chyba!!!')
         }
     }
+
+    
 }
 
+class SetGameDifficulty{
+    constructor(){
+        this.levels = {
+            'level1': true,
+            'level2': true,
+            'level3': true,
+            'level4': true,
+            'level5': true,
+            'level6': true,
+            'level7': true,
+            'level8': true,
+            'level9': true,
+            'level10': true,
+            'level11': true,
+        }
+        this.productRangeGroupA = 1 //ovplyvnuje nastavenie počtu kusov produktov ktorých z jednej davky nevznikne viac ako 8 kusov
+        this.productRangeGroupB = 1 //ovplyvnuje nastavenie počtu kusov produktov ktorých z jednej davky vznikne viac ako 8 kusov
+        this.minTime = 45
+        this.rangeTime = 40
+        this.chanceTwoCustomers = 85
+        this.chanceThreeCustomers = 90
+        this.chanceFourCustomers = 99
+        this.plusNextRecepts = 3 
+    }
 
+    levelsUp(){
+        if(player.prestige > 20 && this.levels['level1'] === true){
+            this.chanceTwoCustomers -= 5
+            this.chanceThreeCustomers -= 5
+            this.levels['level1'] = false
+        }
 
+        if (player.prestige > 40 && this.levels['level2'] === true){
+            this.minTime -= 5
+            this.levels['level2'] = false
+        }
+
+        if (player.prestige > 60 && this.levels['level3'] === true) {
+            this.chanceTwoCustomers -= 5
+            this.chanceThreeCustomers -= 5
+            this.levels['level3'] = false
+        }
+
+        if (player.prestige > 80 && this.levels['level4'] === true) {
+            this.productRangeGroupA += 1
+            this.productRangeGroupB += 1
+            this.levels['level4'] = false
+        }
+
+        if (player.prestige > 100 && this.levels['level5'] === true){
+            customers.allReceptsHaveToHave.push(basicData.allReceptsName[this.plusNextRecepts])
+            this.levels['level5'] = false
+            this.plusNextRecepts += 1
+        }
+
+        if (player.prestige > 120 && this.levels['level6'] === true) {
+            this.chanceTwoCustomers -= 5
+            this.chanceThreeCustomers -= 5
+            this.chanceFourCustomers -= 5
+            this.levels['level6'] = false
+        }
+
+        if (player.prestige > 140 && this.levels['level7'] === true) {
+            this.minTime -= 5
+            this.levels['level7'] = false
+        }
+
+        if (player.prestige > 160 && this.levels['level8'] === true) {
+            this.productRangeGroupA += 1
+            this.productRangeGroupB += 1
+            this.levels['level8'] = false
+        }
+
+        if (player.prestige > 180 && this.levels['level9'] === true) {
+            customers.allReceptsHaveToHave.push(basicData.allReceptsName[this.plusNextRecepts])
+            this.levels['level9'] = false
+            this.plusNextRecepts += 1
+        }
+
+        if (player.prestige > 200 && this.levels['level10'] === true) {
+            this.chanceTwoCustomers -= 5
+            this.chanceThreeCustomers -= 5
+            this.chanceFourCustomers -= 5
+            this.levels['level10'] = false
+        }
+
+        if (player.prestige > 220 && this.levels['level11'] === true) {
+            this.minTime -= 5
+            this.levels['level11'] = false
+        }
+    }
+}
+
+class SaveAndLoadGame{
+    saveGame(){
+        let saveStorage = JSON.stringify(storage)
+        let savePlayer = JSON.stringify(player)
+        let saveMachines = JSON.stringify(machines)
+        let saveCustomers = JSON.stringify(customers)
+        let saveGameDificulty = JSON.stringify(setGameDifficulty)
+        let saveCreateProduct = JSON.stringify(createProduct)
+
+        localStorage.setItem('saveStorage', saveStorage)
+        localStorage.setItem('savePlayer', savePlayer)
+        localStorage.setItem('saveMachines', saveMachines)
+        localStorage.setItem('saveCustomers', saveCustomers)
+        localStorage.setItem('saveGameDificulty', saveGameDificulty)
+        localStorage.setItem('saveCreateProduct', saveCreateProduct)
+
+        render.saveSuccesAlert()
+    }
+
+    loadGame(){
+        let loadStorage = JSON.parse(localStorage.getItem('saveStorage'))
+        let loadPlayer = JSON.parse(localStorage.getItem('savePlayer'))
+        let loadMachines = JSON.parse(localStorage.getItem('saveMachines'))
+        let loadCustomers = JSON.parse(localStorage.getItem('saveCustomers'))
+        let loadGameDificulty = JSON.parse(localStorage.getItem('saveGameDificulty'))
+        let loadCreateProduct = JSON.parse(localStorage.getItem('saveCreateProduct'))
+
+        for (let i = 0; i < Object.keys(storage).length; i++) {
+            storage[Object.keys(storage)[i]] = loadStorage[Object.keys(loadStorage)[i]]
+        }
+
+        for (let i = 0; i < Object.keys(player).length; i++) {
+            player[Object.keys(player)[i]] = loadPlayer[Object.keys(loadPlayer)[i]]
+        }
+
+        for (let i = 0; i < Object.keys(machines).length; i++) {
+            machines[Object.keys(machines)[i]] = loadMachines[Object.keys(loadMachines)[i]]
+        }
+
+        for (let i = 0; i < Object.keys(customers).length; i++) {
+            customers[Object.keys(customers)[i]] = loadCustomers[Object.keys(loadCustomers)[i]]
+        }
+
+        for (let i = 0; i < Object.keys(setGameDifficulty).length; i++) {
+            setGameDifficulty[Object.keys(setGameDifficulty)[i]] = loadGameDificulty[Object.keys(loadGameDificulty)[i]]
+        }
+
+        for (let i = 0; i < Object.keys(createProduct).length; i++) {
+            createProduct[Object.keys(createProduct)[i]] = loadCreateProduct[Object.keys(loadCreateProduct)[i]]
+        }
+
+        for(let i=0; i < Object.keys(storage.allProducts).length; i++){
+            let section = Object.keys(storage.allProducts)[i]
+            for(let a=0; a < Object.keys(storage.allProducts[section]).length; a++){
+                render.preRenderProductOnInfoPanel(Object.keys(storage.allProducts[section])[a], section)
+            }
+        }
+
+        render.preRenderIngredients(Object.keys(storage.overHeadCosts)[0], storage.overHeadCosts[Object.keys(storage.overHeadCosts)[0]])
+        render.preRenderIngredients(Object.keys(storage.overHeadCosts)[1], storage.overHeadCosts[Object.keys(storage.overHeadCosts)[1]])
+        render.preRenderMoney()
+
+        for(let i=0; i < Object.keys(storage.ingredients).length; i++){
+            let item = Object.keys(storage.ingredients)[i]
+            let value = storage.ingredients[Object.keys(storage.ingredients)[i]]
+            render.preRenderIngredients(item, value)    
+        }
+
+        for(let i=0; i < machines.machines.length; i++){
+            render.createMachineElement(machines.machines[i].industryName, machines.machines[i].id)
+        }
+
+        for(let i=0; i < customers.customers.length; i++){
+            render.createHtmlElementsForCustomer(customers.customers[i])
+        }
+    }
+}
 
 const consumptionTheRent = function () {
     let lastTime = 3;
@@ -1333,6 +1554,23 @@ const settingNewGame = function () {
     machines.buyNewOwen('owenHLN200')   
 }
 
+const mytesting = function(){
+    let finalMoney = 0
+    let pocetZakaznikov = 0
+    for(let i=0; i < 100; i++){
+        for (let i = 0; i < customers.howManyCustomersAtOnce(); i++) {
+            customers.addNewCustomer()
+        }
+    }
+
+    for(let i=0; i < customers.customers.length; i++){
+        finalMoney += customers.customers[i].payMoney
+        pocetZakaznikov = i
+    }
+    console.log('Pocet zakaznikov', pocetZakaznikov + 1)
+    console.log('zarobene prachy', finalMoney)
+}
+
 
 let storage = new Storage();
 let machines = new Machines();
@@ -1341,6 +1579,10 @@ let render = new Render();
 let player = new Player();
 let createProduct = new CreateProduct();
 let customers = new Customers()
+let setGameDifficulty = new SetGameDifficulty()
+let saveAndLoadGame = new SaveAndLoadGame()
+
+
 
 
 

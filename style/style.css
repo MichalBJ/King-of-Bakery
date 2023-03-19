@@ -946,3 +946,46 @@ input::-webkit-inner-spin-button {
     grid-column: 2/4;
 }
 
+.customer-alert {
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(0deg, rgb(106, 14, 89) 0%, rgb(151, 17, 127) 35%, rgb(198, 27, 167) 100%);
+    border: 1px solid black;
+    border-radius: 50%;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+}
+
+.customer-alert p{
+    position: relative;
+    top: -1px;
+    left: -1px;
+}
+
+.succes-save-alert{
+    width: 80%;
+    height: 80%;
+    margin: 10px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.succes-save-alert h3{
+    font-size: 30px;
+    font-weight: 500;
+    color: white;
+    padding: 15px;
+    background: linear-gradient(0deg, rgb(106, 14, 89) 0%, rgb(151, 17, 127) 35%, rgb(198, 27, 167) 100%);
+    border-radius: 15px;
+    border: 2px solid rgba(101, 8, 56, 0.4);
+    text-shadow: 10px 4px 8px rgba(0, 0, 0, 1);
+}
+
