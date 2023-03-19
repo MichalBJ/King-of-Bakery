@@ -1101,9 +1101,9 @@ class Customers {
     
     randomNumberGenerator(range){
         console.log('prijal som', range)
-        let hodnota = Math.floor(Math.random()*range)
-        console.log('vraciam', hodnota)
-        return parseInt(hodnota)
+        let hodnota = parseInt(Math.floor(Math.random()*range))
+        console.log('vraciam', typeof(hodnota), hodnota)
+        return hodnota
     }
 
     genderGenerator(){
@@ -1112,35 +1112,34 @@ class Customers {
 
     howManyPiecesGenerator(item){
         let pieces = 0
-        let number = this.randomNumberGenerator(100) + 60;
-        console.log('pre produkt', item, 'number', number)
+        let val = this.randomNumberGenerator(100);
+        console.log('pre produkt', item, 'number', val)
         if (basicData.recepts[item]['numberOfPieces'] < 9){
-            if (number < 60){
+            if (val < 60){
                 pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) - 1) + 1
-                console.log('A pod 60',pieces)
-            } else if (number >= 60 && number < 85){
+                console.log('A pod 60', pieces)
+            } else if (val >= 60 && val <= 85){
                 pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) + setGameDifficulty.productRangeGroupA) + 1
                 console.log('A pod 85', pieces)
-            } else if (number >= 85 && number < 97){
+            } else if (val >= 86 && val <= 97){
                 pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] + setGameDifficulty.productRangeGroupA) + 1
                 console.log('A pod 97', pieces)
-            } else if (number >= 97){
-                pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] + setGameDifficulty.productRangeGroupA) + setGameDifficulty.rangeGroupA
-                console.log('A nad 97', pieces)
+            } else if (val >= 98){
+                pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] + setGameDifficulty.productRangeGroupA) + 1
+                console.log('A nad 97', typeof(pieces), pieces)
             }
         }else{
-            if (number < 60){
+            if (val < 60){
                 pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) - 2) + 1
                 console.log('B pod 60', pieces)
-            } else if (number >= 60 && number < 85) {
+            } else if (val >= 60 && val <= 85) {
                 pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] / 2) + setGameDifficulty.productRangeGroupB
                 console.log('B pod 85', pieces)
-            } else if (number >= 85 && number < 97) {
-                let range = (basicData.recepts[item]['numberOfPieces'] / 2)
-                range += Math.floor(basicData.recepts[item]['numberOfPieces'] / 4)
-                pieces = this.randomNumberGenerator(range) + setGameDifficulty.rangeGroupB
+            } else if (val >= 86 && val <= 97) {
+                pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) + Math.floor(basicData.recepts[item]['numberOfPieces'] / 4)) + setGameDifficulty.productRangeGroupB
+                //pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) + Math.floor(basicData.recepts[item]['numberOfPieces'] / 4)) + setGameDifficulty.rangeGroupB
                 console.log('B pod 97', pieces)
-            } else if (number >= 97) {
+            } else if (val >= 98) {
                 pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces']) + setGameDifficulty.productRangeGroupB
                 console.log('B nad 97', pieces)
             }
