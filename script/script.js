@@ -152,7 +152,8 @@ setInterval(() => {
     createProduct.processOfMaking()
     customers.timerToNewCustomer()
     customers.customerLife()
-    setGameDifficulty.levelsUp()  
+    setGameDifficulty.levelsUp() 
+
 }, 1000);
 
 

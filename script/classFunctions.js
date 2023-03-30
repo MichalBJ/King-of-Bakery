@@ -321,6 +321,7 @@ class Player {
     }
 
     checkMoneyForRecept(receptName){
+        console.log('meno', receptName)
         if ((storage.money - basicData.recepts[receptName]['price'])>= 0){
             return true
         }
@@ -333,7 +334,9 @@ class Player {
 
             if (lastItem.classList.contains('button-buy-recept')){
                 const buttonBuy = recept.querySelector('.button-buy-recept')
+                console.log('tlacitko', buttonBuy)
                 buttonBuy.addEventListener('click', function () {
+
                 let permission = user.checkMoneyForRecept(buttonBuy.title)
                 if(permission){
                     user.haveRecepts.push(buttonBuy.title)
@@ -598,7 +601,7 @@ class BasicData {
             'mixerSHM200':{
                 'machineName': 'Mixer SHM 200',
                 'industryName': 'mixerSHM200',
-                'price':250,
+                'price':55,
                 'consuption': 200,
                 'doAtOnce': 1,
                 'img': 'img/machine/miesic/miesic200.jpg',
@@ -607,7 +610,7 @@ class BasicData {
             'mixerSHM500': {
                 'machineName': 'Mixer SHM 500',
                 'industryName': 'mixerSHM500',
-                'price': 400,
+                'price': 120,
                 'consuption': 500,
                 'doAtOnce': 2,
                 'img': 'img/machine/miesic/miesic500.jpg',
@@ -616,7 +619,7 @@ class BasicData {
             'mixerSHM1000': {
                 'machineName': 'Mixer SHM 1000',
                 'industryName': 'mixerSHM1000',
-                'price': 650,
+                'price': 190,
                 'consuption': 700,
                 'doAtOnce': 3,
                 'img': 'img/machine/miesic/miesic1000.jpg',
@@ -626,7 +629,7 @@ class BasicData {
             'dispenserDRC200': {
                 'machineName': 'Davkovač DRC 200',
                 'industryName': 'dispenserDRC200',
-                'price': 250,
+                'price': 55,
                 'consuption': 150,
                 'doAtOnce': 1,
                 'img': 'img/machine/miesic/miesic200.jpg',
@@ -635,7 +638,7 @@ class BasicData {
             'dispenserDRC500': {
                 'machineName': 'Davkovač DRC 500',
                 'industryName': 'dispenserDRC500',
-                'price': 400,
+                'price': 120,
                 'consuption': 400,
                 'doAtOnce': 2,
                 'img': 'img/machine/miesic/miesic500.jpg',
@@ -644,7 +647,7 @@ class BasicData {
             'dispenserDRC1000': {
                 'machineName': 'Davkovač DRC 1000',
                 'industryName': 'dispenserDRC1000',
-                'price': 650,
+                'price': 190,
                 'consuption': 550,
                 'doAtOnce': 3,
                 'img': 'img/machine/miesic/miesic1000.jpg',
@@ -654,7 +657,7 @@ class BasicData {
             'owenHLN200': {
                 'machineName': 'Pec HLN 200',
                 'industryName': 'owenHLN200',
-                'price': 250,
+                'price': 55,
                 'consuption': 400,
                 'doAtOnce': 1,
                 'img': 'img/machine/miesic/miesic200.jpg',
@@ -663,7 +666,7 @@ class BasicData {
             'owenHLN500': {
                 'machineName': 'Pec HLN 500',
                 'industryName': 'owenHLN500',
-                'price': 400,
+                'price': 120,
                 'consuption': 950,
                 'doAtOnce': 2,
                 'img': 'img/machine/miesic/miesic500.jpg',
@@ -672,7 +675,7 @@ class BasicData {
             'owenHLN1000': {
                 'machineName': 'Pec HLN 1000',
                 'industryName': 'owenHLN1000',
-                'price': 650,
+                'price': 190,
                 'consuption': 1400,
                 'doAtOnce': 3,
                 'img': 'img/machine/miesic/miesic500.jpg',
@@ -883,28 +886,28 @@ class BasicData {
         }
         this.menName = ['Lukáš', 'Martin', 'Peter', 'Ján', 'Michal', 'Maroš', 'Tomáš', 'Marián', 'Alex', 'Pavol', 'Juraj', 'Martin', 'Karol', 'Tibor', 'Andrej', 'Milan', 'Matej', 'Patrik', 'Adam']
         this.womenName = ['Lucia', 'Jana', 'Katarina', 'Ľudmila', 'Maria', 'Alena', 'Renata', 'Zuzana', 'Sandra', 'Ema', 'Terezka', 'Monika', 'Andrea', 'Marianna', 'Petra', 'Viktoria', 'Adela', 'Iveta', 'Ivana', 'Eva']
-        this.menFoto = ['../img/people/men/m01.jpg', 
-                        '../img/people/men/m02.jpg', 
-                        '../img/people/men/m03.jpg', 
-                        '../img/people/men/m04.jpg', 
-                        '../img/people/men/m05.jpg', 
-                        '../img/people/men/m06.jpg', 
-                        '../img/people/men/m07.jpg', 
-                        '../img/people/men/m08.jpg',]
-        this.womenFoto = ['../img/people/women/w01.jpg',
-                        '../img/people/women/w02.jpg',
-                        '../img/people/women/w03.jpg',
-                        '../img/people/women/w04.jpg',
-                        '../img/people/women/w05.jpg',
-                        '../img/people/women/w06.jpg',
-                        '../img/people/women/w07.jpg',
-                        '../img/people/women/w08.jpg',
-                        '../img/people/women/w09.jpg',
-                        '../img/people/women/w10.jpg',
-                        '../img/people/women/w11.jpg',
-                        '../img/people/women/w12.jpg',
-                        '../img/people/women/w13.jpg',
-                        '../img/people/women/w14.jpg'
+        this.menFoto = ['img/people/men/m01.jpg', 
+                        'img/people/men/m02.jpg', 
+                        'img/people/men/m03.jpg', 
+                        'img/people/men/m04.jpg', 
+                        'img/people/men/m05.jpg', 
+                        'img/people/men/m06.jpg', 
+                        'img/people/men/m07.jpg', 
+                        'img/people/men/m08.jpg',]
+        this.womenFoto = ['img/people/women/w01.jpg',
+                        'img/people/women/w02.jpg',
+                        'img/people/women/w03.jpg',
+                        'img/people/women/w04.jpg',
+                        'img/people/women/w05.jpg',
+                        'img/people/women/w06.jpg',
+                        'img/people/women/w07.jpg',
+                        'img/people/women/w08.jpg',
+                        'img/people/women/w09.jpg',
+                        'img/people/women/w10.jpg',
+                        'img/people/women/w11.jpg',
+                        'img/people/women/w12.jpg',
+                        'img/people/women/w13.jpg',
+                        'img/people/women/w14.jpg'
                         ]
         this.allReceptsName = ['chlieb', 'rohlik', 'bageta', 'croissant', 'makovnik', 'muffin', 'zemla', 'donut', 'siska', 'toast']
     }
@@ -1001,7 +1004,7 @@ class CreateProduct {
                         break
                     }else{
                         let item = property
-                        let howMany = basicData.recepts[machine.create][property]
+                        let howMany = basicData.recepts[machine.create][property] * machine.doAtOnce
                         storage.removeIngredients(item, howMany)
                     }
                 }
@@ -1082,6 +1085,7 @@ class Customer {
         this.wanted = wanted
         this.payMoney = payMoney
         this.timeRemaining = 60
+        this.waiting = true
     }
 }
 
@@ -1100,10 +1104,7 @@ class Customers {
     }
     
     randomNumberGenerator(range){
-        console.log('prijal som', range)
-        let hodnota = parseInt(Math.floor(Math.random()*range))
-        console.log('vraciam', typeof(hodnota), hodnota)
-        return hodnota
+        return Math.floor(Math.random()*range)
     }
 
     genderGenerator(){
@@ -1113,82 +1114,78 @@ class Customers {
     howManyPiecesGenerator(item){
         let pieces = 0
         let val = this.randomNumberGenerator(100);
-        console.log('pre produkt', item, 'number', val)
         if (basicData.recepts[item]['numberOfPieces'] < 9){
             if (val < 60){
                 pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) - 1) + 1
-                console.log('A pod 60', pieces)
             } else if (val >= 60 && val <= 85){
                 pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) + setGameDifficulty.productRangeGroupA) + 1
-                console.log('A pod 85', pieces)
             } else if (val >= 86 && val <= 97){
                 pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] + setGameDifficulty.productRangeGroupA) + 1
-                console.log('A pod 97', pieces)
             } else if (val >= 98){
                 pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] + setGameDifficulty.productRangeGroupA) + 1
-                console.log('A nad 97', typeof(pieces), pieces)
             }
         }else{
             if (val < 60){
                 pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) - 2) + 1
-                console.log('B pod 60', pieces)
             } else if (val >= 60 && val <= 85) {
                 pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces'] / 2) + setGameDifficulty.productRangeGroupB
-                console.log('B pod 85', pieces)
             } else if (val >= 86 && val <= 97) {
                 pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) + Math.floor(basicData.recepts[item]['numberOfPieces'] / 4)) + setGameDifficulty.productRangeGroupB
-                //pieces = this.randomNumberGenerator((basicData.recepts[item]['numberOfPieces'] / 2) + Math.floor(basicData.recepts[item]['numberOfPieces'] / 4)) + setGameDifficulty.rangeGroupB
-                console.log('B pod 97', pieces)
             } else if (val >= 98) {
                 pieces = this.randomNumberGenerator(basicData.recepts[item]['numberOfPieces']) + setGameDifficulty.productRangeGroupB
-                console.log('B nad 97', pieces)
             }
         }
-        console.log('posielam kusy', pieces)
         return pieces
     }
 
     setName(){
         let name = ''
         if (this.gender === 0){
-            if (this.lastManName >= basicData.menName.length - 1){
+            if (this.lastManName === basicData.menName.length - 1){
                 this.lastManName = 0
                 name = basicData.menName[this.lastManName]
             }else{
                 this.lastManName += 1
-                name = basicData.menName[this.lastManName]
+                name = basicData.menName[this.lastManName]   
             }
         }else{
-            if (this.lastWomanName > basicData.womenName.length - 1) {
+            if (this.lastWomanName === basicData.womenName.length - 1) {
                 this.lastWomanName = 0
                 name = basicData.womenName[this.lastWomanName]
             } else {
                 this.lastWomanName += 1
-                name = basicData.womenName[this.lastWomanName]
+                name = basicData.womenName[this.lastWomanName]                
             }
         }
+        console.log('muži meno', this.lastManName)
+        console.log('ženy meno', this.lastWomanName)
+        console.log('muzi dlzka', basicData.menName.length)
+        console.log('ženx dlzka', basicData.womenName.length)
         return name
     }
 
     setFoto(){
         let foto = ''
+        console.log('gender', this.gender)
+       
         if (this.gender === 0) {
-            if (this.lastManFoto >= basicData.menFoto.length - 1) {
+            if (this.lastManFoto === basicData.menFoto.length - 1) {
                 this.lastManFoto = 0
                 foto = basicData.menFoto[this.lastManFoto]
-            } else {
-                this.lastManFoto += 1
-                foto = basicData.menFoto[this.lastManFoto]
+            } else{
+                this.lastManFoto += 1  
+                foto = basicData.menFoto[this.lastManFoto]                
             }
         } else {
-            if (this.lastWomanFoto >= basicData.womenFoto.length - 1) {
+            if (this.lastWomanFoto === basicData.womenFoto.length - 1) {
                 this.lastWomanFoto = 0
                 foto = basicData.womenFoto[this.lastWomanFoto]
             } else {
                 this.lastWomanFoto += 1
-                foto = basicData.womenFoto[this.lastWomanFoto]
+                foto = basicData.womenFoto[this.lastWomanFoto]                       
             }
         } 
+
         return foto
     }
 
@@ -1207,14 +1204,9 @@ class Customers {
 
         for (let i = 0; i < howManyProducts; i++){
             const newItem = allRecepts[this.randomNumberGenerator(allRecepts.length)]
-            console.log('newItem', newItem)
             const numberOfItem = this.howManyPiecesGenerator(newItem)
-            console.log('number of item', numberOfItem)
-            console.log('index', allRecepts.findIndex(item => item === newItem))
             allRecepts.splice(allRecepts.findIndex(item => item === newItem), 1)
             this.items[newItem] = numberOfItem
-            console.log('vsetky recpty', allRecepts)
-            console.log('----------------------------------')
         }
         return this.items
     }
@@ -1269,37 +1261,37 @@ class Customers {
         document.querySelector('.timer-sekundes').textContent = ('0' + this.timeToNewCustomer % 60).slice(-2)
     }
 
-    removeCustomers(customerID){
+    removeCustomers(customerID) {
         let customer = document.getElementById(customerID)
         while (customer.hasChildNodes()) {
             customer.removeChild(customer.firstChild)
         }
         customer.remove()
         let customerIndex = customers.customers.findIndex(item => item.id === customerID)
-        customers.customers.splice(customers.customers[customerIndex], 1)
+        customers.customers.splice(customerIndex, 1)
     }
 
-    customerLife(){
-        let wasDelete=false
-        for(let i=0; i < customers.customers.length; i++){
-            if (wasDelete){
+    customerLife() {
+        let wasDelete = false
+        for (let i = 0; i < customers.customers.length; i++) {
+            if (wasDelete) {
                 i -= 1
                 wasDelete = false
             }
             let customerElement = document.getElementById(customers.customers[i].id)
             customerElement.querySelector('.time-leave span').textContent = customers.customers[i].timeRemaining
-            if(customers.customers[i].timeRemaining > 0){
+            if (customers.customers[i].timeRemaining > 0) {
                 customers.customers[i].timeRemaining -= 1
-                for(let a=0; a < Object.keys(customers.customers[i].wanted).length; a++){
+                for (let a = 0; a < Object.keys(customers.customers[i].wanted).length; a++) {
                     let nameItem = Object.keys(customers.customers[i].wanted)[a]
                     let countItem = customers.customers[i].wanted[Object.keys(customers.customers[i].wanted)[a]]
-                    if (countItem > storage.allProducts['finalProduct'][nameItem] ){
+                    if (countItem > storage.allProducts['finalProduct'][nameItem]) {
                         customerElement.querySelector('.wanted-' + nameItem).style.color = 'red';
-                    }else{
+                    } else {
                         customerElement.querySelector('.wanted-' + nameItem).style.color = 'white';
                     }
                 }
-            }else{
+            } else {
                 wasDelete = true
                 this.removeCustomers(customers.customers[i].id)
                 player.removePrestige(1)
@@ -1370,6 +1362,22 @@ class SetGameDifficulty{
             'level9': true,
             'level10': true,
             'level11': true,
+            'level12': true,
+            'level13': true,
+            'level14': true,
+            'level15': true,
+            'level16': true,
+            'level17': true,
+            'level18': true,
+            'level19': true,
+            'level20': true,
+            'level21': true,
+            'level22': true,
+            'level23': true,
+            'level24': true,
+            'level25': true,
+            'level26': true,
+            'level27': true,
         }
         this.productRangeGroupA = 1 //ovplyvnuje nastavenie počtu kusov produktov ktorých z jednej davky nevznikne viac ako 8 kusov
         this.productRangeGroupB = 1 //ovplyvnuje nastavenie počtu kusov produktov ktorých z jednej davky vznikne viac ako 8 kusov
@@ -1383,25 +1391,25 @@ class SetGameDifficulty{
 
     levelsUp(){
         if(player.prestige > 20 && this.levels['level1'] === true){
-            this.chanceTwoCustomers -= 5
-            this.chanceThreeCustomers -= 5
+            this.chanceTwoCustomers = 80
+            this.chanceThreeCustomers = 90
             this.levels['level1'] = false
         }
 
         if (player.prestige > 40 && this.levels['level2'] === true){
-            this.minTime -= 5
+            this.minTime = 40
             this.levels['level2'] = false
         }
 
         if (player.prestige > 60 && this.levels['level3'] === true) {
-            this.chanceTwoCustomers -= 5
-            this.chanceThreeCustomers -= 5
+            this.chanceTwoCustomers = 75
+            this.chanceThreeCustomers = 85
             this.levels['level3'] = false
         }
 
         if (player.prestige > 80 && this.levels['level4'] === true) {
-            this.productRangeGroupA += 1
-            this.productRangeGroupB += 1
+            this.productRangeGroupA = 2
+            this.productRangeGroupB = 2
             this.levels['level4'] = false
         }
 
@@ -1409,23 +1417,24 @@ class SetGameDifficulty{
             customers.allReceptsHaveToHave.push(basicData.allReceptsName[this.plusNextRecepts])
             this.levels['level5'] = false
             this.plusNextRecepts += 1
+            //plus croassant
         }
 
         if (player.prestige > 120 && this.levels['level6'] === true) {
-            this.chanceTwoCustomers -= 5
-            this.chanceThreeCustomers -= 5
-            this.chanceFourCustomers -= 5
+            this.chanceTwoCustomers = 70
+            this.chanceThreeCustomers = 80
+            this.chanceFourCustomers = 95
             this.levels['level6'] = false
         }
 
         if (player.prestige > 140 && this.levels['level7'] === true) {
-            this.minTime -= 5
+            this.minTime = 35
             this.levels['level7'] = false
         }
 
         if (player.prestige > 160 && this.levels['level8'] === true) {
-            this.productRangeGroupA += 1
-            this.productRangeGroupB += 1
+            this.productRangeGroupA = 3
+            this.productRangeGroupB = 3
             this.levels['level8'] = false
         }
 
@@ -1433,18 +1442,108 @@ class SetGameDifficulty{
             customers.allReceptsHaveToHave.push(basicData.allReceptsName[this.plusNextRecepts])
             this.levels['level9'] = false
             this.plusNextRecepts += 1
+            //plus makovnik
         }
 
         if (player.prestige > 200 && this.levels['level10'] === true) {
-            this.chanceTwoCustomers -= 5
-            this.chanceThreeCustomers -= 5
-            this.chanceFourCustomers -= 5
+            this.chanceTwoCustomers = 65
+            this.chanceThreeCustomers = 75
+            this.chanceFourCustomers = 90
             this.levels['level10'] = false
         }
 
         if (player.prestige > 220 && this.levels['level11'] === true) {
-            this.minTime -= 5
+            this.minTime = 35
             this.levels['level11'] = false
+        }
+
+        if (player.prestige > 240 && this.levels['level12'] === true) {
+            this.productRangeGroupA = 4
+            this.productRangeGroupB = 4
+            this.levels['level12'] = false
+        }
+
+        if (player.prestige > 260 && this.levels['level13'] === true) {
+            customers.allReceptsHaveToHave.push(basicData.allReceptsName[this.plusNextRecepts])
+            this.levels['level13'] = false
+            this.plusNextRecepts += 1
+            //plus muffin
+        }
+
+        if (player.prestige > 280 && this.levels['level14'] === true) {
+            this.chanceTwoCustomers = 60
+            this.chanceThreeCustomers = 70
+            this.chanceFourCustomers = 85
+            this.levels['level14'] = false
+        }
+
+        if (player.prestige > 300 && this.levels['level15'] === true) {
+            this.minTime = 30
+            this.levels['level15'] = false
+        }
+
+        if (player.prestige > 320 && this.levels['level16'] === true) {
+            this.productRangeGroupA = 5
+            this.productRangeGroupB = 5
+            this.levels['level16'] = false
+        }
+
+        if (player.prestige > 340 && this.levels['level17'] === true) {
+            customers.allReceptsHaveToHave.push(basicData.allReceptsName[this.plusNextRecepts])
+            this.levels['level17'] = false
+            this.plusNextRecepts += 1
+            //plus zemla
+        }
+
+        if (player.prestige > 400 && this.levels['level18'] === true) {
+            customers.allReceptsHaveToHave.push(basicData.allReceptsName[this.plusNextRecepts])
+            this.levels['level18'] = false
+            this.plusNextRecepts += 1
+            //donut
+        }
+
+        if (player.prestige > 420 && this.levels['level19'] === true) {
+            this.chanceTwoCustomers = 55
+            this.chanceThreeCustomers = 65
+            this.chanceFourCustomers = 80
+            this.levels['level19'] = false
+        }
+
+        if (player.prestige > 440 && this.levels['level20'] === true) {
+            this.minTime = 25
+            this.levels['level20'] = false
+        }
+
+        if (player.prestige > 480 && this.levels['level21'] === true) {
+            customers.allReceptsHaveToHave.push(basicData.allReceptsName[this.plusNextRecepts])
+            this.levels['level21'] = false
+            this.plusNextRecepts += 1
+            //siska
+        }
+
+        if (player.prestige > 560 && this.levels['level22'] === true) {
+            customers.allReceptsHaveToHave.push(basicData.allReceptsName[this.plusNextRecepts])
+            this.levels['level22'] = false
+            this.plusNextRecepts += 1
+            //toast
+        }
+
+        if (player.prestige > 600 && this.levels['level23'] === true) {
+            this.chanceTwoCustomers = 50
+            this.chanceThreeCustomers = 60
+            this.chanceFourCustomers = 75
+            this.levels['level23'] = false
+        }
+
+        if (player.prestige > 640 && this.levels['level24'] === true) {
+            this.productRangeGroupA = 6
+            this.productRangeGroupB = 6
+            this.levels['level24'] = false
+        }
+
+        if (player.prestige > 680 && this.levels['level20'] === true) {
+            this.minTime = 20
+            this.levels['level20'] = false
         }
     }
 }
