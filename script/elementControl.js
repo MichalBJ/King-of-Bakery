@@ -1,3 +1,14 @@
+import machines from "./machines.js";
+import render from "./render.js";
+import saveAndLoadGame from "./saveAndLoadGame.js";
+
+const settingNewGame = function () {
+    machines.buyNewMixer('mixerSHM200')
+    machines.buyNewDispenser('dispenserDRC200')
+    machines.buyNewOwen('owenHLN200')
+    render.preRenderIngredients("eggs", 0)
+}
+
 /*ovladanie tlačidiel uvodneho menu */
 document.querySelectorAll(".main-menu > ul > li").forEach(function (li) {
     li.addEventListener('mouseover', function (ev) {
@@ -26,7 +37,7 @@ document.querySelectorAll(".main-menu > ul > li").forEach(function (li) {
 
         if (li.innerText === 'NOVÁ HRA') {
             gameContainer.style.display = 'block';
-            settingNewGame()
+            settingNewGame();
             
         } else if (li.innerText === 'POKRAČOVAŤ'){
             gameContainer.style.display = 'block';
@@ -96,66 +107,3 @@ document.querySelectorAll(".in-game-nav ul li").forEach(function (item) {
     })
 })
 
-
-/* Funkcie pre sekciu SKLAD */
-
-/* Nakup strojov */
-document.querySelectorAll('.machine .button-wraper .buy-button').forEach(function (button) {
-    let btn = button
-
-    btn.addEventListener('click', function () {
-        if (btn.title.slice(0, 1) === 'm'){
-
-            if (storage.money >= basicData.machines[btn.title]['price']){
-                machines.buyNewMixer(btn.title);
-                storage.removeMoney(basicData.machines[btn.title]['price']);
-            }else {
-                alert("Nemaš dostatok peňazi");
-            }
-            
-        } else if (btn.title.slice(0, 1) === 'd'){
-
-            if (storage.money >= basicData.machines[btn.title]['price']) {
-                machines.buyNewDispenser(btn.title);
-                storage.removeMoney(basicData.machines[btn.title]['price']);                
-            } else {
-                alert("Nemaš dostatok peňazi");
-            }
-            
-        } else if (btn.title.slice(0, 1) === 'o'){
-            if (storage.money >= basicData.machines[btn.title]['price']) {
-                machines.buyNewOwen(btn.title);
-                storage.removeMoney(basicData.machines[btn.title]['price']);                
-            } else {
-                alert("Nemaš dostatok peňazi");
-            }
-            
-        }
-    })
-    
-    
-})
-
-/* Nakup ingrediencii a režnych nakladov */
-player.setValueOfQuantity()
-player.buyIngrediens();
-player.buyOverHeadCoast();
-player.buyRecept();
-
-
-
-consumptionTheRent()
-
-//gameFunction.selectItemToMade()
-
-setInterval(() => {
-    createProduct.processOfMaking()
-    customers.timerToNewCustomer()
-    customers.customerLife()
-    setGameDifficulty.levelsUp() 
-
-}, 1000);
-
-
-
-console.log(window.screen.availWidth)
